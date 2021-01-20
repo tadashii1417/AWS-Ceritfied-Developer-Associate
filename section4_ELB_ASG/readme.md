@@ -87,11 +87,11 @@ Load balancers are servers that forward internet traffic to multiple servers (EC
 
 AWS has 3 kinds of **managed Load Balancers**:
 
-- Classic Load Balancer (v1 - old generation) – 2009
+- **Classic Load Balancer** (v1 - old generation) – 2009
 • HTTP, HTTPS, TCP
-- Application Load Balancer (v2 - new generation) – 2016
+- **Application Load Balancer** (v2 - new generation) – 2016
 • HTTP, HTTPS, WebSocket
-- Network Load Balancer (v2 - new generation) – 2017
+- **Network Load Balancer** (v2 - new generation) – 2017
 • TCP, TLS (secure TCP) & UDP
 
 Overall, it is recommended to use the newer / v2 generation load balancers as they
@@ -106,7 +106,7 @@ You can setup **internal** (private, cannot access from public web) or **externa
 ![Load balancer Security Groups](lb-sg.png)
 
 - The LB has a security group, EC2 have too. But, EC2 Policy group reference to LB's security group
-- LBs can scale but not instantaneously - contact AWS for a "warm-up"
+- LBs **can scale but not instantaneously** - contact AWS for a "warm-up"
 - Troubleshooting
 • 4xx errors are client induced errors
 • 5xx errors are application induced errors
@@ -115,3 +115,4 @@ You can setup **internal** (private, cannot access from public web) or **externa
 - Monitoring
 • ELB access logs will log all access requests (so you can debug per request)
 • CloudWatch Metrics will give you aggregate statistics (ex: connections count)
+
