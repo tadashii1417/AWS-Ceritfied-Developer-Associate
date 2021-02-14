@@ -39,7 +39,9 @@
 
 ## Section 4: ELB + ASG
 
-Scalability:
+### 4.1 Elastic Load Balancer
+
+\* *Scalability:*
 
 - **Vertical** scalability:
   - Increase size of the instance
@@ -48,17 +50,18 @@ Scalability:
   - Increase the number of instances
   - Used in distributed system
 
-Why use a load balancer ?
+\* *Why use a load balancer ?*
 
 - Single point of access (DNS)
-- Health check, SSL termiation (HTTPS)
+- Health check, SSL termination (HTTPS)
 - Seperate public traffic from private traffic.
 
-Types of load balanceer:
+\* *Types of load balanceer:*
 
 - **Classic Load Balancer**: HTTP, HTTPS, TCP
   - TCP (layer 4), HTTP (layer 7)
   - Fixed hostname
+  - Can only have one SSL certificate.
 
 - **Application Load Balancer**: HTTP, HTTPS, WebSocket
   - HTTP (layer 7)
@@ -72,15 +75,20 @@ Types of load balanceer:
     - ECS tasks
     - Lambda function
     - IP addresses -> *Must be private IPs*
+
+  - Support multiple listeners with multiple SSL Cert, Use SNI to make it work.
+
   - ***Note***: The application (ex: EC2 instance) don't see the IP of the client directly, the true IP is inserted in the header ***X-Forwarded-For***, any other information like Port, proto, etc.
 
 - **Network Load Balancer**: TCP & UDP & TLS (secure TCP)
   - Forward TCP & UDP traffic to your instances.
   - Extremely high performance: milions of request
   - Low latency
-  - NLB has ***one static IP per AZ***.
+  - NLB has *one static IP **per** AZ*, support assigning **Elastic IP** (**Only NLB have this.)**
+  - Used for extreme performance, TCP & UDP trafic.
+  - Support multiple listeners with multiple SSL Cert, Use SNI to make it work.
 
-Good to know about Load balancer:
+\* *Good to know about Load balancer:*
 
 - LBs can be scale but not instanteneously.
   - Troubleshooting
@@ -88,13 +96,37 @@ Good to know about Load balancer:
     - 5xx: application induced errors.
     - 503: at capacity or no registerd target.
 
-Load balancer Stickiness:
+\* *Load balancer **Stickiness**:*
 
-- Same client always redirected to the same instance.
+- be able that same client always redirected to the same instance.
 - Only work for **CLB & ALB**
 - Make sure the session data of user is saved.
 - May bring imbalance to the load.
 
-Cross-zone Load Balancing
+\* *Cross-zone Load Balancing*
 
-- With Cr
+- each load balancer instance *distribute evenly accross all instances* in all AZ.
+- ALB: by default always on CZB, can't be disabled.
+- CLB & NLB: disabled by default.
+
+\* *SSL - Server Name Indication (SNI)*
+
+- SNI solves the problem of **loading multiple SSL certificates onto one web server** (to serve multiple websites)
+- requires the client to indicate the hostname of the target server then find & return correct SSL cert.
+- Only work for new gen (ALB&NLB), CloudFront.
+
+### 4.3 Auto Scaling Group
+
+- ASGs use **Launch configurations** or **Launch Template** (newer)
+- IAM roles attached to an ASG will get assigned to EC2 instances
+- **Scaling Policies**
+  - *Target Tracking Scaling*
+    - Most simple and easy to setup
+    - Example: I want the average ASG CPU to stay at around 40%
+  - *Simple/Step Scaling*
+    - When a CloudWatch alarm is triggered (example CPU > 70%), then add 2 units
+    - When a CloudWatch alarm is triggered (example CPU < 30%), then remove 1
+  - *Scheduled Actions*
+    - Anticipate a scaling based on known usage patterns
+    - Example: increase the min capacity to 10 at 5 pm on Fridays
+- The cooldown period helps to ensure that your Auto Scaling group doesn't launch or terminate additional instances before the previous scaling activity takes effect
