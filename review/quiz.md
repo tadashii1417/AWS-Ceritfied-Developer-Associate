@@ -144,3 +144,99 @@ C. TTL
 ANS: B
 A. cache miss read 3 -> fail
 B. this has longer writes, but the reads are quick and the data is always updated in the cache
+
+-------------
+**17. You have set up an internet gateway in your VPC, but your EC2 instances still don't have access to the internet. Which of the following is NOT a possible issue?**
+
+A. Route Tables are missing entries
+B. The security group does not allow network in
+C. The NACL does not allow network traffic out.
+
+ANS: B
+Security groups are stateful and if traffic can go out, then it can go back in
+The reason why option #2 is the answer is because it mentions inbound traffic instead of outbound. That leaves the other 2 choices as a possibility.
+
+What the explanation means is that AWS will allow traffic back to an EC2 instance due to its stateless nature and regardless of inbound rules that you give it. And in this scenario, that's unlikely to be the issue because we aren't able to get traffic to the Internet.
+
+**18. Your EC2 instance in a private subnet must access the AWS APIs privately. You must keep all traffic within the AWS network. What do you recommend?**
+
+A. NAT gateway
+B. VPC endpoint
+C. Direct Connect
+
+ANS: B
+
+------------------------------------
+
+**19. The bucket policy allows our users to read/write files in the bucket, yet we were not able to perform a PutObject API call. What is your assessment?**
+
+A. The bucket policy is wrong
+B. The IAM user has an explicit DENY in the attached IAM policy
+C. You need to contact AWS Support to lift this limit
+
+ANS. B
+Explicit DENY in an IAM policy will take precedence over a bucket policy permission.
+
+**20. You have a website that loads files from another S3 bucket. When you try the URL of the files directly in your Chrome browser it works, but when the website you're visiting tries to load these files it doesn't. What's the problem?**
+
+A. The bucket policy is wrong
+B. The IAM policy is wrong
+C. CORS is not enabled
+D. Encryption is wrong
+
+ANS: C
+
+------------------------------------
+
+**21. I have an on-premise personal server that I'd like to use to perform AWS API calls**
+
+A. I should run `aws configure` and put my credentials there. Invalidate them when I'm done
+B. I should attach an EC2 IAM Role to my personal server
+
+ANS: A
+you can't attach EC2 IAM roles to on premise servers
+
+**22. The AWS CLI depends on which language?**
+
+A. Java
+B. Python
+C. Golang
+D. C#
+
+ANS B
+
+**23. I'd like to deploy an application to an on-premise server. The server needs to perform API calls to Amazon S3. Amongst the following options, the best security I can achieve is...**
+
+A. run `aws configure` and insert my personal credentials
+B. create an IAM user for the application and insert the credentials in the application's code
+C. create an IAM user for the application and put the credentials into environment variables. Here, it's about creating a dedicated user for that application, as using your own personal credentials would blur the lines between actual users and applications.
+D. attach an IAM Role to my on-premise server
+
+ANS: C
+or you could run `aws configure` on the machine
+
+**24. When I run the CLI on my EC2 Instances, the CLI uses the ______ service to get _____ credentials thanks to the IAM Role that's attached.**
+
+A. user data | temporary
+B. user data | permanently
+C. meta data | temporary
+D. meta data | permanently
+
+ANS: C
+
+**25. Which API call should be used to get credentials before issuing API calls against an MFA-protected API?**
+
+A. STS GetFederationToken
+B. STS GetSessionToken
+C. IAM GetMFAToke
+
+ANS: B
+
+**You suspect some of your employees to try to access files in S3 that they don't have access to. How can you verify this is indeed the case without them noticing?**
+
+A. Restrict their IAM policies and look at CloudTrail logs
+B. Enable S3 Access Logs and analyze them using Athena
+C. Use a bucket policy
+
+ANS: B
+A will notify user.

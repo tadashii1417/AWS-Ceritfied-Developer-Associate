@@ -55,3 +55,10 @@ Chỉ có tác dụng tinh thần, làm đúng hết để lấy tự tin (sau k
 Review lại bằng notes ghi lại trong khoá học
 Tham khảo các last-minute note của những người thi trước tại đây, đây hoặc đây
 Ăn no, ngủ kỹ, cầu trời đừng bão hoặc có người nhảy tàu vào hôm thi
+
+
+--------------------
+
+PART 2: 
+https://huychau.me/kinh-nghiem-thi-chung-chi-aws-certified-developer-associate-2021/?fbclid=IwAR3NMUtBUGxm9yQ6im8_pDz17KwlVsCFbYoxTnDFRGtwuyKIywNcUGS8lt8
+
