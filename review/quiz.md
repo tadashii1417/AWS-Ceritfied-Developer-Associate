@@ -232,7 +232,7 @@ C. IAM GetMFAToke
 
 ANS: B
 
-**You suspect some of your employees to try to access files in S3 that they don't have access to. How can you verify this is indeed the case without them noticing?**
+**26. You suspect some of your employees to try to access files in S3 that they don't have access to. How can you verify this is indeed the case without them noticing?**
 
 A. Restrict their IAM policies and look at CloudTrail logs
 B. Enable S3 Access Logs and analyze them using Athena
@@ -240,3 +240,51 @@ C. Use a bucket policy
 
 ANS: B
 A will notify user.
+
+**27. CloudFront is deploying in front of an HTTP origin. After updating your HTTP app, the users still see the old website. What should you do?**
+
+A. Disable Caching
+B. Invalidate Distribution
+C. Recreate a Distribution
+
+ANS: B
+
+-------------------------
+
+**28. Which ECS config must you enable in /etc/ecs/ecs.config to allow your ECS tasks to endorse IAM roles?**
+
+A. ECS_CLUSTER
+B. ECS_ENGINE_AUTH_DATA
+C. ECS_AVAILABLE_LOGGING_DRIVERS
+D. ECS_ENABLE_TASK_IAM_ROLE
+
+ANS: D
+
+**29. You are running a web application on ECS, the Docker image is stored on ECR, and trying to launch two containers of the same type on EC2. The first container starts, but the second one doesn't. You have checked and there's enough CPU and RAM available on the EC2 instance. What's the problem?**
+
+A. The EC2 instances has permissions issues with ECR and you must fix the IAM policy
+B. The host port is defined in the task definition
+C. The container port is defined in the task definition
+D. EC2 instances can only run one container instance for each image
+
+ANS: B
+To enable random host port, set host port = 0 (or empty), which allows multiple containers of the same type to launch on the same instance
+
+**30. You have started an EC2 instance and it's not registered with the ECS cluster. What's NOT a reason for this issue?**
+
+A. The ECS agent is not running
+B. The AMI used isn't AWS ECS AMI
+C. The EC2 instance is missing IAM permissions
+D. The SG on EC2 instances is misconfigured
+
+ANS: D
+security groups do not matter when an instance registers with the ECS service
+
+**31. You would like to run 4 ECS services on your ECS cluster, which need access to various services. What is the best practice?**
+
+A. Create an EC2 instance role with 4 policies and attach it to the EC2 instances in the ECS cluster
+B. Create 4 EC2 instance roles and attach them to the EC2 instances in the ECS cluster
+C. Create 1 ECS task role with 4 policies and attach it to each ECS task definition
+D. Create 4 ECS task roles and attach them to the relevant ECS task definition
+
+ANS: D

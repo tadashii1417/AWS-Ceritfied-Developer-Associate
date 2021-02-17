@@ -8,6 +8,14 @@
 - **SNI** Server Name Indication
 - **STS** Security Token Service
 - **RDS** Relational Database Service
+- **CloudFront** Content delivery network
+- **ECS** Elastic Container Service
+- **ECR** Elastic Container Registry
+- **Fargate** alternative for ECS, but serverless
+- **EKS** Amazon's managed Kubernetes.
+
+- **S3 Select** filter simple SQL on S3 server
+- **Athena** filter complex SQL on S3 server
 - **TDE** Transparent Data Encryption (way to protect RDS)
 - **ENI** Elastic Network Interface (VPC Endpoint Interface), logical networking component in a VPC that represents a virtual network card
 - **SDK** Software Development Kit
@@ -15,5 +23,6 @@
 - **SSL** Secure Socket Layer
 - **TLS** Transport Layer Security
 - **CA** Certificate Authorities.
-- **S3 Select** filter simple SQL on S3 server
-- **Athena** filter complex SQL on S3 server
+- **OAI** Origin Access Identity (used for cloudfront)
+- **AMI** Amazon Machine Image
+- **Security groups** are like a firewall for your EC2 instances.

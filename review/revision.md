@@ -490,3 +490,84 @@ def save_user(id, values):
 
 - **Athena**
   - perform analytics directly on S3 files.
+
+## 12. CloudFront
+
+- Content Delivery Network (CDN)
+- Improves read performance, content is cached at the edge
+- DDoS protection, integration with Shield, AWS Web Application Firewall
+- CloudFront Origins:
+  - **S3 bucket**
+    - Origin Access Identity (OAI)
+    - OAI as IAM Role for CloudFront
+    - S3 Bucket policy: allow OAI to access S3 objects.
+  - **Custom origin (HTTP)**
+    - ALB, EC2 instance, S3 website, ...
+
+| CloudFront                                                 | S3 Cross Region Replication                                              |
+|------------------------------------------------------------|--------------------------------------------------------------------------|
+| Global Edge network                                        | set up for desire region                                                 |
+| File are cached for TTL                                    | File are updated in near real-time but read-only                         |
+| Great for **STATIC** content that must be available everywhere | Great for **DYNAMIC** content that available with low-latency in few regions |
+
+## 13. ECS Essentials
+
+- Docker containers management platform:
+  - ECS
+  - Fargate: serverless platform
+  - EKS: Amazon's managed kubernetes
+
+- **ECS Clusters Overview:**
+  - ECS Clusters are logical grouping of EC2 instances
+  - EC2 instances run the ECS agent (Docker container), and have `escInstanceRole`
+  - The ECS agents registers the instance to the ECS cluster
+  - EC2 instances can run multiple containers on the same type
+  - The EC2 instances run a special AMI, made specifically for ECS
+  - EC2 instances must be created
+  - We must configure `ecs.config` with the cluster name
+
+- **ECS Task Definitions**:
+  - Tasks definitions are metadata in JSON form to tell ECS how to run a Docker Container
+  - need `taskRole` to have permissions (pull images, ...)
+
+- **ECS Service**:
+  -  define how many tasks should run and how they should be run
+
+- **ECS Service with Load Balancer**
+  - Use with ALB for dynamic port forwarding
+  - No need to configure host port this time -> random (~host port = 0). ***If we specify it, only one container can be run in EC2 instance***
+  - But container port is needed => ALB will handle this with dynamic port mapping.
+
+![ALB with ECS service](images/alb&ecs.png)
+
+- **ECR**
+  - private docker image repository
+  - AWS CLI v1 login command
+`$(aws ecr get-login --no-include-email --region eu-west-1)`
+  - AWS CLI v2 login command (using pipe)
+`aws ecr get-login-password --region eu-west-1 | docker login --username AWS -- password-stdin 1234567890.dkr.ecr.eu-west-1.amazonaws.com`
+
+- **Fargate**
+  - Serverless service for ECS, just need to create task definition
+
+- **EC2 Instance Profile**: 
+  - Makes API calls to ECS service by ECS Agent
+  - Send log, pull images
+
+- **• ECS Task Role:**:
+  - Use different roles for the different ECS Services you run
+  - Task Role is defined in the task definition
+
+- **ECS Task Placement Strategies**
+  - **Binpack**: try to fill as much as possible
+    - Places tasks based on the least available space of CPU
+    - Minimize the number of instances (cost saving)
+  - **Random**
+  - **Spread**
+    - Place the task evenly based on the specified value
+    - Maximizing the high avaiability of ECS
+  - You can mix them together
+
+- *ECS - Service Auto Scaling* based on Target Tracking, Step Scaling, Scheduled Scaling
+- Cluster Auto Scaling through Capacity Providers.
+
