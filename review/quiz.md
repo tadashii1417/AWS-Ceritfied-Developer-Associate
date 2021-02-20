@@ -288,3 +288,24 @@ C. Create 1 ECS task role with 4 policies and attach it to each ECS task definit
 D. Create 4 ECS task roles and attach them to the relevant ECS task definition
 
 ANS: D
+
+-------------------
+
+**32. I would like to customize the runtime of Elastic Beanstalk and include some of my company wide security software. I should**
+
+A. Provide EC2 User Data Script
+B. Provide a custom platform
+C. Provide a docker image.
+
+ANS: B
+
+**33. My deployments on Elastic Beanstalk have been painfully slow, and after looking at the logs, I realize this is due to the fact that my dependencies are resolved on each EC2 machine at deployment time. How can I speed up my deployment with the minimal impact?**
+
+A. Remove some dependencies in your code
+B. Place the dependencies in Amazon S3
+C. Resolve the dependencies beforehand and package them in the zip file uploaded to Elastic Beanstalk
+
+ANS: C
+ex. node_module is zip with src code.
+
+

@@ -16,6 +16,7 @@
 
 - **S3 Select** filter simple SQL on S3 server
 - **Athena** filter complex SQL on S3 server
+- **Beanstalk** deploy application safely & predictably.
 - **TDE** Transparent Data Encryption (way to protect RDS)
 - **ENI** Elastic Network Interface (VPC Endpoint Interface), logical networking component in a VPC that represents a virtual network card
 - **SDK** Software Development Kit

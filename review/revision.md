@@ -571,3 +571,98 @@ def save_user(id, values):
 - *ECS - Service Auto Scaling* based on Target Tracking, Step Scaling, Scheduled Scaling
 - Cluster Auto Scaling through Capacity Providers.
 
+---------------
+
+## 14. AWS Elastic Beanstalk
+
+- Elastic Beanstalk is a **developer centric view** of deploying an application on AWS
+
+\* *Three architecture models:*
+
+- **Single Instance** deployment: good for dev
+- **LB + ASG**: great for production or pre-production web applications
+- **ASG only**: great for non-web apps in production (workers, etc..)
+
+\* *Elastic Beanstalk has three components:*
+
+- Application
+- Application version: each deployment gets assigned a version
+- Environment name (dev, test, prod…)
+
+\* *If we have RDS inside Beanstalk:*
+
+- Good for dev/test only
+- Beanstalk delete --> RDS delete
+- Consider to put RDS inside or outside Beanstalk
+- In prod, create outside and using by connection string.
+
+\* *Elastic Beanstalk Deployment Modes:*
+
+|                                     | Availability                         | Deployment time | Additional cost              | Other                                                                         |
+|-------------------------------------|--------------------------------------|-----------------|------------------------------|-------------------------------------------------------------------------------|
+| **All at once**                         | Has downtime                         | Fastest         | No                           |                                                                               |
+| **Rolling**                             | Running below capacity               | Long            | No                           | Run both versions simultaneously                                              |
+| **Rolling with <br>additional batches** | Running at capacity                  | Longer          | Small                        | - run both versions simultaneously<br>- good for prod.                        |
+| **Immutable**                           | Running at capacity<br>Zero downtime | Longest         | High cost<br>double capacity | - deployed to a temporary ASG<br>- quick rollback if fail<br>- great for prod |
+
+From AWS:
+![AWS deployment methods](./images/beanstalk-dm.png)
+
+\* *Elastic Beanstalk Deployment: Blue / Green* (~Immutable)
+
+- Create a new “stage” environment and deploy v2 there
+- The new environment (green) can be validated independently and roll back if issues
+- **Route 53** can be setup using **weighted policies** to redirect a little bit of traffic to the stage environment
+- Using **Beanstalk**, “*swap URLs*” when done with the environment test
+
+\* ***Elastic Beanstalk Extensions***
+
+- A zip file containing our code must be deployed to Elastic Beanstalk
+- All the parameters set in the UI can be configured with code using files
+- Requirements:
+  - in the **.ebextensions/ directory** in the root of source code
+  - YAML / JSON format
+  - **.config** extensions (example: logging.config)
+  - Able to modify some default settings using: option_settings
+  - Ability to add resources such as RDS, ElastiCache, DynamoDB, etc (using CloudFormation)
+  - You can define periodic tasks in a file **cron.yaml**
+
+- Under the hood, Elastic Beanstalk relies on CloudFormation
+- CloudFormation is used to provision other AWS services
+- After creating an Elastic Beanstalk environment, you **cannot** change the Elastic Load Balancer type
+
+\* *Elastic Beanstalk – Single Docker*
+
+- Run your application as a single docker container
+- **Dockerfile**: Elastic Beanstalk will build and run the Docker container
+- **Dockerrun.aws.json** (v1): Describe where *already built* Docker image is
+  - Image
+  - Ports
+  - Volumes
+  - Logging
+- Beanstalk in Single Docker Container does not use ECS
+  
+\* *Elastic Beanstalk – Multi Docker Container ~ ECS*
+
+- Multi Docker helps run multiple containers per EC2 instance in EB
+- This will create for you:
+  - ECS Cluster
+  - EC2 instances, configured to use the ECS Cluster
+  - Load Balancer (in high availability mode)
+  - Task definitions and execution
+- Requires a config **Dockerrun.aws.json** (v2) at the root of source code, to generate the **ECS task definition**
+
+\* *Elastic Beanstalk – **Custom Platform***
+
+- They **allow to define from scratch**:
+  - The Operating System (OS)
+  - Additional Software
+  - Scripts that Beanstalk runs on these platforms
+
+- **Use case**: app language is incompatible with Beanstalk & doesn’t use Docker
+- To create your own platform:
+  - Define an AMI using **Platform.yaml** file
+  - Build that platform using the Packer software (open source tool to create AMIs)
+- Custom Platform vs Custom Image (AMI):
+  - Custom Image is to tweak an existing Beanstalk Platform (Python, Node.js, Java…)
+  - Custom Platform is to create an entirely new Beanstalk Platform
