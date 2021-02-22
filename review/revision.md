@@ -666,3 +666,327 @@ From AWS:
 - Custom Platform vs Custom Image (AMI):
   - Custom Image is to tweak an existing Beanstalk Platform (Python, Node.js, Java…)
   - Custom Platform is to create an entirely new Beanstalk Platform
+
+## 15. AWS CICD
+
+- CICD: Continuous Integration & Continuous Delivery
+- **CodeCommit**: storing our code (~Github, Bitbucket)
+- **CodePipeline**: automating our pipeline from code to ElasticBeanstalk
+- **CodeBuild**: building and testing our code
+- **CodeDeploy**: deploying the code to EC2 fleets (not Beanstalk)
+
+![Tech Stack for CICD](./images/tech-stack-cicd.png)
+
+- **CodeCommit**:
+  - You can trigger notifications in CodeCommit using AWS SNS or AWS Lambda or AWS CloudWatch Event Rules.
+- **CodePineline**
+  - Each pipeline stage can create `artifacts`, are passed stored in Amazon S3 and passed on to the next stage
+- **CodeBuild**:
+  - Build instructions can be defined in code (`buildspec.yml` file)
+    - Phrases: `Install`, `Pre Build`, `Build`, `Post Build`
+  - Builds can be defined within CodePipeline or CodeBuild itself
+  - Java, Ruby, Python, Go, Nodejs, Android, .NET, PHP, Docker (extend any environment)
+  - CodeBuild run on docker
+![How CodeBuild work](./images/codebuild-work.png)
+
+- **CodeDeploy**
+  - Each EC2 Machine (or On Premise machine) must be running the CodeDeploy Agent
+  - The agent is continuously polling AWS CodeDeploy for work to do
+  - CodeDeploy sends `appspec.yml` file. *(Application Revision = Code + appspec)*
+  - **EC2** will run the deployment instructions
+  - CodeDeploy Agent will report of success / failure of deployment on the instance
+  - EC2 instances are grouped by deployment group (dev / test / prod)
+  - Blue / Green only works with EC2 instances (not on premise)
+![How CodeDeploy work](./images/codedeploy-work.png)
+
+- **AWS CodeDeploy AppSpec**
+  - how to source and copy from S3 / GitHub to filesystem
+  - Hooks: the order is
+    - **ApplicationStop**
+    - DownloadBundle
+    - BeforeInstall
+    - AfterInstall
+    - **ApplicationStart**
+    - **ValidateService**
+
+- CodeDeloy Deployment methods:
+  - In Place Deployment – Half at a time
+  - Blue Green Deployment
+
+- **CodeStar**
+  - CodeStar is an integrated solution that regroups: GitHub, CodeCommit, CodeBuild, CodeDeploy, CloudFormation, CodePipeline, CloudWatch
+
+## 16. AWS CloudFormation
+
+- ***Templates have to be uploaded in S3*** and then referenced in CloudFormation
+- YAML and JSON are the languages you can use for CloudFormation.
+- Everything in the CloudFormation template has to be declared. You can’t perform code generation there (variable)
+- The `Fn::Ref` function can be leveraged to reference parameters
+- `Pseudo Parameters`: AccountId, NotificationARNs, NoValue, Region, StackId, StackName
+- `Mappings` are fixed variables within your CloudFormation Template
+- `Outputs` section declares optional outputs values that we can import into other stacks (if you export them first)!
+- `Conditions` are used to control the creation of resources or outputs based on a condition.
+
+\* *Important functions:*
+
+- `!FindInMap [ MapName, TopLevelKey, SecondLevelKey, ... ]`
+- `!ImportValue [Name]` get exported value from other stack.
+- `!GetAtt resource.att` Get any attribute of a resource.
+
+\* *Nested stacks vs Cross Stacks*
+
+| Cross stack                                        | Nested stack                            |
+|----------------------------------------------------|-----------------------------------------|
+| Helpful when stacks have different life cycles     | Helpful when components must be re-used |
+| Use exported value by Fn::ImportValue              | ex: Re-use configuration of an ALB      |
+| When you need to pass export values to many stacks | All about reusable                      |
+
+\* *ChangeSets* ~ dry run
+
+- When you update a stack, you need to know what changes before it happens for greater confidence
+
+\* ***StackSets***
+
+- Create, update, or delete stacks across **multiple accounts and regions** with a single operation
+
+## 17. AWS Monitoring, Troubleshooting & Audit
+
+- AWS **CloudWatch**:
+  - *Metrics*: Collect and track key metrics
+    - With detailed monitoring, you get data `every 1 minute` (default 5)
+  - *Logs*: Collect, monitor, analyze and store log files
+  - *Events*: Send notifications when certain events happen in your AWS
+  - *Alarms*: React in real-time to metrics / events
+- AWS **X-Ray**:
+  - Troubleshooting *application performance and errors*
+  - Distributed tracing of microservices
+- AWS **CloudTrail**:
+  - Internal monitoring of *API calls* being made
+  - Audit changes to AWS Resources by your users, history of events / API calls made within your AWS Account
+  *- If a resource is deleted in AWS, look into CloudTrail first!*
+
+\* *CloudWatch Custom Metrics*
+
+- Metric resolution (StorageResolution API parameter – two possible value):
+  - **Standard**: 1 minute (60 seconds)
+  - **High Resolution**: 1 second – Higher cost
+- Use API call `PutMetricData`
+- Use exponential back off in case of throttle errors
+
+\* AWS CloudWatch Alarms
+
+- Alarm states:
+  - OK
+  - INSUFFICIENT_DATA
+  - ALARM
+- Period:
+  - *High resolution custom metrics*: 10sec or 30sec
+
+\* *CloudWatch Logs for EC2*
+
+- By default, no logs from your EC2 machine will go to CloudWatch
+- You need to run a **CloudWatch agent** on EC2 to push the log files you want
+- The CloudWatch log agent can be setup on-premises too
+
+\* *CloudWatch Logs Agent & Unified Agent*
+
+| CloudWatch Logs Agent                                            | CloudWatch Unified Agent                                                                                       |
+|------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
+| - Old version of the agent<br>- Can only send to CloudWatch Logs | - Collect additional metric (CPU, RAM, netstats, ...)<br>- Centralized configuration using SSM Parameter Store |
+
+\* *CloudWatch Logs Metric Filter*
+
+- Filters do not retroactively filter data. Filters only publish the metric data points for events that happen after the filter was created.
+
+![Metric filter cloudwatch log](./images/metric-filter.png)
+
+\* *Amazon EventBridge*
+
+- EventBridge is the next evolution of CloudWatch Events
+- **Default** event bus: generated by AWS services (CloudWatch Events)
+- **Partner** event bus: receive events from SaaS service or applications (Zendesk, *DataDog*, Segment, Auth0…)
+- **Custom** Event buses: for your own applications
+- The Schema Registry allows you to generate code for your application, that will know in advance how data is structured in the event bus
+
+
+\* ***AWS X-Ray***
+
+- Debugging in Production
+- Tracing is an end to end way to following a “request”
+- How to enable X-Ray
+  - Import X-Ray SDK in code
+  - Install the X-Ray daemon or enable X-Ray AWS Integration
+    - X-Ray daemon works as a low level UDP packet interceptor (Linux / Windows / Mac…)
+    - AWS Lambda / other AWS services already run the X-Ray daemon for you
+
+- To enable on:
+  - **Lambda** make sure function import x-ray
+  - **Beanstalk** config in file `.ebextensions/xray-daemon.config`
+![How to enable X-Ray](./images/x-ray.png)
+
+- X-Ray Concepts:
+  - Segments: each application / service will send them
+    - *Subsegments*: if you need more details in your segment
+    - *Trace*: segments collected together to form an end-to-end trace
+    - ***Sampling***: decrease the amount of requests sent to X-Ray, reduce cost
+    - *Annotations*: Key Value pairs used to index traces and use with filters
+    - *Metadata*: Key Value pairs, not indexed, not used for searching
+
+- Commons APIs:
+  - Write APIs:
+    - used by X-Ray daemon
+    - `PutTraceSegments`, `PutTelemetryRecords`
+    - `GetSamplingRule` to know what/when to send
+
+## 17. AWS Integration & Messaging (SQS, SNS, Kinesis)
+
+- Using **SQS**: queue model
+- Using **SNS**: pub/sub model
+- Using **Kinesis**: real-time streaming model
+
+### 17.1 Amazon SQS
+
+- Default retention of messages: 4 days, maximum 14 days
+- Producing messages by:
+  - Using the SDK (SendMessage API)
+- Consuming Messages:
+  - Consumers: EC2 instances, servers, AWS Lambda, ...
+  - Poll SQL for messages (up to 10 at a time)
+  - Delete the messages using `DeleteMessage` API
+
+- **SQS Access Policies**
+  - Similar to S3 bucket policies
+  - Useful for cross-account access to SQS queue
+  - Useful for allowing other services to write on queue
+
+- **Message Visibility Timeout** 
+  - After polling, message become "invisible" to others
+  - By default: `30s`, that means the message has 30s to processed
+  - After that, it become `visible` to other again.
+  - => *If message is not processed within visibility timeout, it will be processed **twice***
+  - If timeout is `high` => crash, re-processing take time
+  - If timeout is `low`  => may get duplicate
+
+- **Dead Letter Queue**
+  - Useful for debuging.
+  - Good to set a retention of 14 days.
+
+- **Delay Queue**
+  - Delay a message up to 15m
+  - Default is 0s (available)
+  - Can set a default at queue level
+  - Can override the default by using `DelaySeconds` parameter.
+
+- **Long Polling**
+  - If queue empty, optionally `wait` for messages.
+  - **Descrease the number of API calls**, increase the efficiency & latency of your application
+  - From 1s to 20s
+  - Long Polling is preferable to Short Polling
+  - Can be enable at queue level with `WaitTimeSeconds`
+
+- **SQS Extended Client**
+  - Message size limit is 256KB
+  - With BIG file => Extended Client
+  - The idea is: only send metadata to queue, and consumer using that metadata to retrieve from S3
+
+- Must known APIS
+  - `CreateQueue` (MessageRetentionPeriod), `DeleteQueue`
+  - `PurgeQueue`: delete all the messages in queue
+  - `SendMessage` (DelaySeconds), `ReceiveMessage`, `DeleteMessage`
+  - `ReceiveMessageWaitTimeSeconds`: Long Polling
+  - `ChangeMessageVisibility`: change the message timeout
+  - Batch APIs for SendMessage, DeleteMessage, ChangeMessageVisibility
+helps decrease your costs
+
+- SQS FIFO Queue:
+  - Exactly-once send capability by removing duplicate
+  - De-duplication interval is 5 minutes (no dup)
+    - Content-base: do a hash on message body
+    - Explicitly provide ID
+  - Message Grouping
+    - By using same value `MessageGroupID`
+    - Each group may have different consumer
+    - Ordering is not guaranteed.
+    - Each group can be processed by different consumers.
+
+### 17.2 Amazon SNS (Pub/Sub)
+
+- `1-N` one SNS topic, many receivers (subscription)
+- **Subcriber can be:**
+  - SQS
+  - HTTP/HTTPS
+  - Lambda
+  - Emails
+  - SMS messages
+  - Mobile Notifications
+
+- **SNS + SQS**: Fan Out
+  - Push once in SNS, receive in all SQS queues that are subscribers
+  - Fully decoupled, no data loss
+  - SQS allows for: data persistence, delayed processing and retries of work
+  - Ability to add more SQS subscribers over time
+  - *Make sure your SQS queue access policy allows for SNS to write*
+  - **SNS cannot send messages to SQS FIFO queues** (AWS limitation)
+
+![SNS+SQS: Fan out](./images/fan_out.png)
+
+### 17.3 Kinesis 
+
+- Managed alternative to Apache Kafka
+- Great for `real-time` big data
+- Data is automatically replicated to 3 AZ
+
+- **Kinesis Stream** low latency streaming 
+- **Kinesis Analytics** real-time analytics on streaming using SQL
+- **Kinesis Firehose** load streams to S3, RedShift, ElasticSearch...
+
+\* **Kinesis Stream**
+
+- Streams are devided in ordered `Shards/Partition`
+  - `Records` are ordered per SHARD
+- Data retention is 1 day by default (max 7 days)
+- ***Ability to reprocess/replay data***
+- Multiple applications can consume the same stream.
+- Once data is inserted in Kinesis, it can't be deleted
+- **Put records**
+  - `Partition Key` get hashed to determine SHARD ID
+  - Choose a key that highly distributed
+- **ProvisionedThrougtputExceededExceptions**
+  - when sending more data for any shard
+  - try to avoid `hot shard` by choosing a better key.
+
+\* **Kinesis KCL: Kinesis Client Library**
+
+- KCL is a **Java** library that read record from Kinesis Stream
+- **Rule**: *each shard is be read only once KCL instances*
+- 4 shards = **max** 4 KCL instances
+- **progress** is checkpointed into **DynamoDB**
+
+### 17.4 Others
+
+\* Ordering data into SQS
+
+- For SQS standard, there is no ordering.
+- For SQS FIFO, if you don’t use a Group ID, messages are consumed in the
+order they are sent, **with only one consumer**
+  - You want to scale the number of consumers, but you want messages to be `grouped` when they are related to each other => Then you use a Group ID (similar to Partition Key in Kinesis)
+
+\* Kinesis vs SQS ordering
+
+```
+Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
+• Kinesis Data Streams:
+  • On average you’ll have 20 trucks per shard
+  • Trucks will have their data ordered within each shard
+  • The maximum amount of consumers in parallel we can have is 5
+  • Can receive up to 5 MB/s of data
+• SQS FIFO
+  • You only have one SQS FIFO queue
+  • You will have 100 Group ID
+  • You can have up to 100 Consumers (due to the 100 Group ID)
+  • You have up to 300 messages per second (or 3000 if using batching)
+```
+
+| SQS                                                                                                                                                                     | SNS                                                                                                                            | Kinesis                                                                                                                                                       |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| - Consumer pull data<br>- Data is deleted after consumed<br>- Can have many consumer as we want<br>- No ordering (except FIFO)<br>- Individual message delay capability | - Push data to many subcribers<br>- Many consumers<br>- Data is not persisted<br>- Pub/Sub<br>- Integrate with SQS for fan-out | - Consumer pull data<br>- Many consumers<br>- Possibility to replay data<br>- Real-time big data<br>- Ordering at shard level<br>- Must provision throughput. <br>-Once inserted, can't be deleted.|

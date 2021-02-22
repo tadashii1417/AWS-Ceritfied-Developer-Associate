@@ -308,4 +308,110 @@ C. Resolve the dependencies beforehand and package them in the zip file uploaded
 ANS: C
 ex. node_module is zip with src code.
 
+-------------------------
 
+**34. You want to send email alerts anytime pull requests are open or comments are added to commits in CodeCommit. You should use**
+
+A. AWS SES
+B. AWS SNS
+C. AWS CloudWatch Events
+
+ANS: C
+
+**35. Your manager wants to receive emails when your CodePipeline fails in order to take action. How do you do it?**
+
+ANS: Same above
+
+**36. Which AWS Services allow you to track and audit API calls made to and from CodePipeline?**
+
+A. CodeBuild
+B. CloudTrail
+C. IAM
+D. Beanstalk
+
+ANS: B
+
+**37. You would like to improve the performance of your CodeBuild build. You realize that 15 minutes at each build is spent on pulling dependencies from remote repositories and that takes a while. What should you do to drastically speed up the build time?**
+
+A. Commit dependencies in your code
+B. Change `buildspec.yml` to enable dependencies caching in S3
+C. Remove all dependencies
+
+ANS: B
+
+**38. You would like to deploy static web files to Amazon *S3* automatically, after generating the static websites from markdown files. Which services should you use for this?**
+
+A. CodeCommit + CodePineline
+B. CodePineline + CodeBuild
+C. CodePineline + CodeDeploy
+D. CodeDeploy
+
+ANS: B
+CodeDeploy only allows to deploy to EC2 instances!!
+CodeBuild can run any commands, so you can use it to run commands including generating a static website and copy your static web files to Amazon S3.
+
+--------------------
+
+**39. The !Ref function can be used to reference the following except...**
+
+A. Parameters
+B. Resources
+C. Conditions
+
+ANS: C
+
+----------------------
+
+**40. We'd like to have CloudWatch Metrics for EC2 at a 1 minute rate. What should we do?**
+
+A. Enable Custom Metrics
+B. Enable High Resolution
+C. Enable Basic Monitoring
+D. Enable Detailed Monitoring
+
+ANS: D
+
+**41. CloudWatch logs automatically expire after 7 days by default**
+
+A. True
+B. False
+
+ANS: B
+They never expire by default
+
+**42. You would like to index your XRay traces in order to search and filter through them efficiently. What should you use?**
+
+A. Segments
+B. Sampling
+C. Annotations
+D. Metadata
+
+ANS: C
+
+-------------------------
+
+**43. You are preparing for the biggest day of sale of the year, where your traffic will increase by 100x. You have already setup SQS standard queue. What should you do?**
+
+A. Open a support ticket
+B. Enable auto scaling in SQS
+C. Increase capacity of SQS queue
+D. SQS scale automatically
+
+ANS: D
+
+**44. You want to send email notifications to your users. You should use**
+
+A. SQS with lambda
+B. SNS
+C. Kinesis
+
+ANS: B
+
+**45. Which SQS FIFO message attribute allows two messages to be processed in order?**
+
+A. MessageDeduplicationID
+B. MessageGroupId
+C. MessageHash
+D. MessageOrderId
+
+ANS: B

@@ -13,6 +13,19 @@
 - **ECR** Elastic Container Registry
 - **Fargate** alternative for ECS, but serverless
 - **EKS** Amazon's managed Kubernetes.
+- **CICD**: Continuous Integration & Continuous Delivery
+
+- **CodeCommit**: storing our code (~Github, BitBucket)
+- **CodePipeline**: automating our pipeline from code to ElasticBeanstalk
+- **CodeBuild**: building and testing our code
+- **CodeDeploy**: deploying the code to EC2 fleets (not Beanstalk)
+- **CodeStar** is an integrated solution that regroups: GitHub, CodeCommit,
+CodeBuild, CodeDeploy, CloudFormation, CodePipeline, CloudWatch
+
+- **EventBridge** next evolution of CloudWatch Events
+- **SQS** Simple queue Service
+- **SNS** Simple notification service
+- **Kinesis** alternative to Kafka, real-time streaming, analytic, firehore
 
 - **S3 Select** filter simple SQL on S3 server
 - **Athena** filter complex SQL on S3 server
