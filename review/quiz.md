@@ -415,3 +415,50 @@ C. MessageHash
 D. MessageOrderId
 
 ANS: B
+
+----------------------
+
+**46. Your lambda function is invoked asynchronously and some events fail from being processed after 3 retries. You'd like to collect and analyze these events later on. What should do you?**
+
+A. Add a logging statement for all events in your Lambda function and filter the CloudWatch logs
+B. Enable synchronous processing of events from Lambda
+C. Add a Dead Letter Queue to send messages to SNS
+D. Add a Dead Letter Queue to send messages to SQS
+
+ANS: D
+
+C. DLQ can send to SNS, but the message has to be received right away by a subscriber or it is lost. This won't fit our use case of analyzing the message later
+D. This is good as SQS will hold the message for some days so we have time to consume it
+
+**47. You have enabled the Lambda and X-Ray integration but it doesn't work. Why is that?**
+
+A. You need to run the X-Ray daemon as a dependency in your deployment package
+B. Check IAM
+
+ANS: B
+
+**48. You'd like to have a long string of 8 KB loaded in your Lambda code**
+
+A. Environment variable
+B. Place it in zip file
+
+ANS. B
+Unfortunately there's a 4 KB limit for environment variables
+
+**49. How do you declare a Lambda function with AWS CloudFormation?**
+
+A. Upload all the code to CodeCommit and refer to the CodeCommit Repository in AWS::Lambda::Function block
+B. Upload all the code to CodeDeploy and refer to the CodeDeploy application in AWS::Lambda::Function block
+C. Upload all the code as a folder to S3 and refer the folder in AWS::Lambda::Function block
+D. Upload all the code as a zip to S3 and refer the object in AWS::Lambda::Function block
+
+ANS: D
+
+**50. How can a Lambda function be integrated with an ALB?**
+
+A. With an Event Source Mapping
+B. With an asynchronous invocation
+C. With a target group
+D. With ÁSG
+
+ANS: C
