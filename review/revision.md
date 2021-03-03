@@ -990,3 +990,107 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 | SQS                                                                                                                                                                     | SNS                                                                                                                            | Kinesis                                                                                                                                                       |
 |-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | - Consumer pull data<br>- Data is deleted after consumed<br>- Can have many consumer as we want<br>- No ordering (except FIFO)<br>- Individual message delay capability | - Push data to many subcribers<br>- Many consumers<br>- Data is not persisted<br>- Pub/Sub<br>- Integrate with SQS for fan-out | - Consumer pull data<br>- Many consumers<br>- Possibility to replay data<br>- Real-time big data<br>- Ordering at shard level<br>- Must provision throughput. <br>-Once inserted, can't be deleted.|
+
+## 18 AWS Lambda
+
+- Short execution time (timeout 3s => 15m)
+- **Synchronous** Invocations Service:
+  - ELB (ALB)
+  - API Gateway
+  - CloudFront (Lambda@Edge)
+  - S3 Batch
+  - Cognito
+  - Step Functions
+
+- **Asynchronous Invocations** (3 tries)
+  - S3, SNS, Events / EventBridge
+  - The events are placed in **Event Queue**
+  - Can define a DLQ (Dead letter queue) - SNS or SQS for failed process.
+
+- ALB Multi-header values
+  - enable multi-value headers
+- Can by used with X-Ray by using SDK.
+- Layer: to re-use dependencies & sp other platform.
+
+- **Lambda@Edge**
+  - Run global AWS lambda alongside CloudFront CDN
+  - Request filtering before reaching your application.
+  - Use lambda to change CloudFront requests & responses.
+  - Stay in the middle of CloudFront & App (DB)
+    - Transformation
+    - User authentication, authorization, ...
+![Using lambda@edge as global application](./images/lambda_edge.png)
+
+\* *Lambda - Event Source Mapping*
+
+- Applied for stream & queue:
+  - Kinesis Data Stream
+  - SQS queue
+  - DynamoDB stream
+- Lamba function is invoke synchronously.
+- Using Long Polling
+- Processed item aren't removed from the stream (other can read)
+- By default, if return error, entire batch is reprocessed until the function succeed.
+  - If failed => Lambda destination.
+- Lambda delete item from the queue after processed successfully.
+- Recommended: Set the queue visibility timeout to 6x the timeout of your lambda.
+
+\* *Lambda - Destination*
+
+- With asynchronous invocations can define destination for successful & failed event.
+- It is recommended using Desitination rather than DLQ
+
+\* ***Lambda in VPC***
+
+- You must define the VPC ID, the Subnets and the Security Groups
+- Lambda will create an **ENI** (Elastic Network Interface) in your subnets 
+- AWSLambdaVPCAccessExecutionRole
+
+![Lambda in VPC](./images/lambda-vpc.png)
+
+\* **Lambda in VPC - Internet Access**
+
+![Lambda in VPC - Internet access](./images/lambda-internet.png)
+
+- Deploying a Lambda function in a public subnet does not give it internet access or a public IP (except EC2 instance)
+- **2 ways for lambda to access internet/resources**
+  - Using **NAT gateway** in public subnet (Private -> NAT -> IGW -> Others) : can access Internet & AWS services
+  - Using **VPC Endpoints**: can access AWS services (not internet)
+
+
+\* *Lambda /tmp space: Execution context*
+
+- if your lambda function need to download big file to work or more disk space. 
+- used as `transient cache`: can be used for multiple invocations
+- for permanent cache => S3
+
+\* *Lambda Concurrency and Throttling*
+
+- Can set a `reserved concurrency` at the function level (=limit)
+- Throttle behavior:
+  - If synchronous invocation => return ThrottleError - 429
+  - If asynchronous invocation => retry automatically and then go to DLQ
+
+- If is function based not app or other based
+  - Number of lambda invoke matter not which app
+
+\* *Cold Starts & Provisioned Concurrency*
+
+| Cold Start                                                                                                                                                                                                                                 | Provisioned Concurrency                                                                                                                                                                                                                |
+|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| - New instance => code is loaded and code outside the handler run (init)<br>- If the init is large (code, dependencies, SDK…) this process can take some time.<br>- First request served by new instances has higher latency than the rest | - Concurrency is allocated before the function is invoked (in advance)<br>- So the cold start never happens and all invocations have low latency<br>- Application Auto Scaling can manage concurrency (schedule or target utilization) |
+
+\* *AWS Lambda Aliases*
+
+- We can define a “dev”, ”test”, “prod” aliases and have them point at different lambda versions
+- Aliases** enable Blue / Green deployment** by assigning weights to lambda functions
+- Aliases have their own ARNs
+- Aliases cannot reference aliases
+
+\* *Lambda & CodeDeploy*
+
+- CodeDeploy can help you automate traffic shift for Lambda aliases
+- 3 appproaches:
+  - **Linear** : grow traffic every N minutes until 100%
+  - **Canary** : try X percent then 100%
+  - **AllAtOnce**: immediate.
