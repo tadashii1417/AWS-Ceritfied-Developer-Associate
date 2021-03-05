@@ -1094,3 +1094,118 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - **Linear** : grow traffic every N minutes until 100%
   - **Canary** : try X percent then 100%
   - **AllAtOnce**: immediate.
+
+## DynamoDB
+
+- Support simple `ProjectionExpression`
+- NoSQL databases do not support join, aggregations such as “SUM”
+- All the data that is needed for a query is present in one row
+- NoSQL databases scale horizontally (RDBMS vertically)
+- Data types supported are:
+  - Scalar Types: String, Number, Binary, Boolean, Null
+  - Document Types: List, Map
+  - Set Types: String Set, Number Set, Binary Set
+
+- DynamoDB – Primary Keys:
+  - **Partition key only (HASH)**
+    - key must be unique, ex: user_id
+  - **Partition key + Sort Key**
+    - sort key == range key
+    - users-games table
+      - user_id for the partition key
+      - keygame_id for the sort key 
+    - **Only** partition key + sort key can be set @NotNull, others can't
+  
+- ***By default***: DynamoDB uses `Eventually Consistent Reads` (may have unexpected response), but GetItem, Query & Scan provide a `ConsistentRead` parameter you can set to True.
+  
+- **Provisioned Throughput**
+  - RCU: Read Capacity Unit
+  - WCU: Write Capacity Unit
+  - Throughput can be exceeded temporarily using `burst credit`
+  - If burst credit are empty, you’ll get a `ProvisionedThroughputException`.
+  - It’s then advised to do an exponential back-off retry.
+
+- **One WCU** = 1 write per second for an item up to 1 KB in size.
+- **One RCU** = 
+  - 1 strongly consistent read per second, for an item up to 4 KB in size.
+  - 2 eventually consistent reads per second, for an item up to 4 KB in size.
+
+- WCU and RCU are spread evenly between partitions
+
+\* *Throttling*
+
+- If we exceed our RCU or WCU, we get ProvisionedThroughputExceededExceptions
+- **Reasons**:
+  - Hot keys: one partition key is being read too many times (popular item for ex)
+  - Hot partitions:
+  - Very large items: remember RCU and WCU depends on size of items
+- **Solutions**:
+  - Exponential back-off when exception is encountered (already in SDK)
+  - Distribute partition keys as much as possible
+  - If RCU issue, we can use DynamoDB Accelerator (DAX)
+
+\* *DynamoDB – Query*
+
+- Query returns items based on:
+  - PartitionKey value (must be = operator)
+  - SortKey value (=, <, <=, >, >=, Between, Begin) – optional
+  - FilterExpression to further filter (client side filtering)
+
+\* *DynamoDB - Scan*
+
+- Scan the entire table and then filter out data (inefficient)
+- Can use a `ProjectionExpression` + `FilterExpression`
+
+\* *LSI (Local Secondary Index)*
+
+- Alternate range key for your table, local to the hash key (except: partition + range key)
+- **LSI must be defined at table creation time**
+- Uses the WCU and RCU of the main table (No special throttling considerations)
+
+\* *GSI (Global Secondary Index)*
+
+- To speed up queries on non-key attributes, use a Global Secondary Index
+- GSI = partition key (***can be new***) + `optional` sort key
+- Literally create a new `table` with:
+  - Partition key + Optional Sort key
+  - Others columns (INCLUDE or ALL)
+- **Possibility to add / modify GSI (not LSI)**
+- *If the writes are throttled on the GSI, then the main table will be throttled!*
+  
+\* *DynamoDB - DAX*
+
+- Seamless cache for DynamoDB, no application re-write
+- Writes go through DAX to DynamoDB 
+- Solves the Hot Key problem (too many reads)
+- 5 minutes TTL for cache by default
+- Individual objects cache, Query / Scan cache (for aggregation => ElasticCache)
+
+
+\* *DynamoDB Streams*
+
+- Changes in DynamoDB (Create, Update, Delete) can end up in a DynamoDB Stream
+- This stream can be read by **AWS Lambda** & **EC2 instances**
+
+\* *DynamoDB Transactions*
+
+- Consume 2x of WCU / RCU
+
+\* *Session State Cache*
+
+- Good options: ElastiCache, DynamoDB
+- ElastiCache is in-memory, but DynamoDB is serverless
+
+\* *DynamoDB – Write Types*
+
+- Concurrent
+- Atomic
+- Conditional
+- Batch
+
+\* *DynamoDB Operations*
+
+- **Copying a DynamoDB Table:**
+  - Use AWS DataPipeline (uses EMR)
+  - Create a backup and restore the backup into a new table name (can take sometime)
+
+

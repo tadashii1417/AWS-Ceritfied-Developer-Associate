@@ -30,6 +30,8 @@ CodeBuild, CodeDeploy, CloudFormation, CodePipeline, CloudWatch
 - **S3 Select** filter simple SQL on S3 server
 - **Athena** filter complex SQL on S3 server
 - **Beanstalk** deploy application safely & predictably.
+- **DAX** If RCU issue, we can use DynamoDB Accelerator (DAX)
+
 - **TDE** Transparent Data Encryption (way to protect RDS)
 - **ENI** Elastic Network Interface (VPC Endpoint Interface), logical networking component in a VPC that represents a virtual network card
 - **SDK** Software Development Kit
