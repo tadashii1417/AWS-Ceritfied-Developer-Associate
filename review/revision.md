@@ -1095,7 +1095,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - **Canary** : try X percent then 100%
   - **AllAtOnce**: immediate.
 
-## DynamoDB
+## 19. DynamoDB
 
 - Support simple `ProjectionExpression`
 - NoSQL databases do not support join, aggregations such as “SUM”
@@ -1209,3 +1209,129 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - Create a backup and restore the backup into a new table name (can take sometime)
 
 
+-----------
+
+## 20. API Gateway
+
+• AWS Lambda + API Gateway: No infrastructure to manage
+• Support for the WebSocket Protocol
+• Handle API versioning (v1, v2…)
+• Handle different environments (dev, test, prod…)
+• Handle security (Authentication and Authorization)
+• Create API keys, handle request throttling
+• Swagger / Open API import to quickly define APIs
+• Transform and validate requests and responses
+• Generate SDK and API specifications
+• Cache API response
+• Need re-deploy to make it effective.
+
+\* *API Gateway – Integrations High Level*
+
+- **Lambda Function**
+- **HTTP**
+  - ex: : internal HTTP API on premise, Application Load Balancer
+  - Why? Add rate limiting, caching, user authentications, API keys, etc
+- **AWS Service**
+  - Example: start an AWS Step Function workflow, post a message to SQS
+  - Why? Add authentication, deploy publicly, rate control… 
+
+\* *Endpoint Types*
+
+- **Edge-Optimized (default)**
+  - Requests are routed through the CloudFront Edge locations (improves latency)
+  - The API Gateway still lives in only one region
+- **Regional**
+- **Private**
+  - Can only be accessed from your VPC using an interface VPC endpoint (ENI)
+
+\* **API Gateway Stage Variables & Lambda Aliases**
+
+- We create a stage variable to indicate the corresponding Lambda alias
+- API gateway -> Stage variable -> Lambda alias -> Lambda version.
+
+\* *Blue / green deployment with AWS Lambda & API Gateway*
+
+- Possibility to enable **canary deployments** for any stage (usually prod), choose the %
+
+\* **API Gateway - Integration Types**
+
+- **MOCK** mock api
+- ***HTTP / AWS (Lambda & AWS Services)***
+  - you must configure both the integration request and integration response 
+  - Setup data mapping using `mapping templates` for the request & response
+![Integration type - aws/http](./images/api-http/aws.png)
+- **AWS_PROXY (Lambda Proxy)**
+- **HTTP_PROXY**
+  - No mapping template
+  - The HTTP request is passed to the backend
+  - The HTTP response from the backend is forwarded by API Gateway
+
+\* ***Mapping Templates***
+
+- modify request / responses: query string parameters, body content, Add headers
+- JSON to XML with SOAP:
+  - SOAP API are XML based, whereas REST API are JSON based
+
+![Mapping template](./images/mapping-temp.png)
+
+\* *Caching API responses*
+
+- Default TTL (time to live) is 300 seconds (min: 0s, max: 3600s)
+- **Caches are defined per stage**, possible to override cache settings per method
+- API Gateway Cache Invalidation 
+  - Clients can invalidate the cache with header: `Cache- Control: max-age=0`
+
+\* *To configure a usage plan*
+1. Create one or more APIs, configure the methods to require an API key
+2. Generate or import API keys to distribute to application developers
+3. Create the usage plan with the desired throttle and quota limits.
+4. Associate API stages and API keys with the usage plan.
+*• Callers of the API must supply an assigned API key in the `x-api-key header` in requests to the API.*
+
+\* *API Gateway – CloudWatch Metrics*
+
+- **IntegrationLatency**: The time between when API Gateway relays a request to the backend and when it receives a response from the backend.
+- **Latency**: The time between when API Gateway receives a request from a client and when it returns a response to the client. 
+- `Latency` = `IntegrationLatency` + Others (authenticate, checking cache, mapping template, ...)
+- **API gateway timeout** is `29s` when `Latency` or `IntegrationLatency` >29s
+
+\* **API Gateway – Security**
+
+- **IAM permissions**:
+  - Create an IAM policy authorization and attach to User / Role
+  - ***Authentication = IAM | Authorization = IAM Policy***
+  - Leverages `Sig v4` capability where IAM credential are in headers
+
+- **Cognito User Pools**:
+  - ***Authentication = Cognito User Pools | Authorization = API Gateway Methods***
+
+![API gateway security with cognito](./iamges/../images/api-cognito.png)  
+
+- **Lambda Authorizer (formerly Custom Authorizers)**
+  - Token-based authorizer (bearer token)
+  - Lambda must return an IAM policy for the user, result policy is cached
+  - ***Authentication = External | Authorization = Lambda function***
+
+![sercurity with lambda](./image/../images/lamda-authorizer.png)
+
+- **Summary**
+
+  - **IAM**:
+• Great for users / roles already within your AWS account, + resource policy for cross account
+• Handle authentication + authorization
+• Leverages Signature v4
+  - **Custom Authorizer**:
+• Great for `3rd party` tokens
+• Very flexible in terms of what IAM policy is returned
+• *Handle Authentication verification + Authorization in the Lambda function*
+• Pay per Lambda invocation, `results are cached`
+  - **Cognito User Pool**:
+• You `manage your own user pool` (can be backed by Facebook, Google login etc…)
+• No need to write any custom code
+• `MUST implement authorization in the backend` 
+
+\* *Last note:*
+
+- HTTP API (simple version) vs REST API vs WebSocket API
+- **REST APIs**- All features (except Native OpenID Connect / OAuth 2.0)
+- **HTTP APIs**: • support OIDC - OpenID Connect and OAuth 2.0 authorization
