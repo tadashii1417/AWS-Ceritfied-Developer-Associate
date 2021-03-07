@@ -1,5 +1,3 @@
-# Revision
-
 ## Section 3: IAM + EC2
 
 - If your application is **not accessible (time out)**, then it's a **security group** issue.
