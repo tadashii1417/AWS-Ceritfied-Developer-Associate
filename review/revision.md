@@ -71,9 +71,9 @@
   - Great for micro services & container-based application
   - Has a ***port mapping feature*** to redirect to a dynamic port in ECS
   - **Targets** are:
-    - EC2 instances
-    - ECS tasks
-    - Lambda function
+    - `EC2 instances`
+    - `ECS tasks`
+    - `Lambda function`
     - IP addresses -> *Must be private IPs*
 
   - Support multiple listeners with multiple SSL Cert, Use SNI to make it work.
@@ -1213,17 +1213,17 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 ## 20. API Gateway
 
-• AWS Lambda + API Gateway: No infrastructure to manage
-• Support for the WebSocket Protocol
-• Handle API versioning (v1, v2…)
-• Handle different environments (dev, test, prod…)
-• Handle security (Authentication and Authorization)
-• Create API keys, handle request throttling
-• Swagger / Open API import to quickly define APIs
-• Transform and validate requests and responses
-• Generate SDK and API specifications
-• Cache API response
-• Need re-deploy to make it effective.
+- AWS Lambda + API Gateway: No infrastructure to manage
+- Support for the WebSocket Protocol
+- Handle API versioning (v1, v2…)
+- Handle different environments (dev, test, prod…)
+- Handle security (Authentication and Authorization)
+- Create API keys, handle request throttling
+- Swagger / Open API import to quickly define APIs
+- Transform and validate requests and responses
+- Generate SDK and API specifications
+- Cache API response
+- Need re-deploy to make it effective.
 
 \* *API Gateway – Integrations High Level*
 
@@ -1317,21 +1317,194 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **Summary**
 
   - **IAM**:
-• Great for users / roles already within your AWS account, + resource policy for cross account
-• Handle authentication + authorization
-• Leverages Signature v4
+    - Great for users / roles already within your AWS account, + resource policy for cross account
+    - Handle authentication + authorization
+    - Leverages Signature v4
   - **Custom Authorizer**:
-• Great for `3rd party` tokens
-• Very flexible in terms of what IAM policy is returned
-• *Handle Authentication verification + Authorization in the Lambda function*
-• Pay per Lambda invocation, `results are cached`
+    - Great for `3rd party` tokens
+    - Very flexible in terms of what IAM policy is returned
+    - *Handle Authentication verification + Authorization in the Lambda function*
+    - Pay per Lambda invocation, `results are cached`
   - **Cognito User Pool**:
-• You `manage your own user pool` (can be backed by Facebook, Google login etc…)
-• No need to write any custom code
-• `MUST implement authorization in the backend` 
+    - You `manage your own user pool` (can be backed by Facebook, Google login etc…)
+    - No need to write any custom code
+    - `MUST implement authorization in the backend` 
 
 \* *Last note:*
 
 - HTTP API (simple version) vs REST API vs WebSocket API
 - **REST APIs**- All features (except Native OpenID Connect / OAuth 2.0)
 - **HTTP APIs**: • support OIDC - OpenID Connect and OAuth 2.0 authorization
+
+-----------------------
+
+## 21. Serverless Application Model (SAM)
+
+- SAM is built on CloudFormation, is a shortcut of CloudFormation
+- All the configuration is YAML code
+- SAM requires the Transform and Resources sections
+- Generate complex CloudFormation from simple SAM YAML file
+- SAM is integrated with CodeDeploy to do deploy to Lambda aliases
+
+- Recipe:
+  - Transform Header indicates it’s SAM template `Transform: 'AWS::Serverless-2016-10-31'`
+  - Write Code 
+    - AWS::Serverless::Function => Lambda
+    - AWS::Serverless::Api => API gateway
+    - AWS::Serverless::SimpleTable => DynamoDb
+  - Package & Deploy:
+    - `sam build`  fetch dependencies and create local deployment artifacts
+    - `aws cloudformation package` = `sam package`
+    - `aws cloudformation deploy` = `sam deploy` deploy to CloudFormation
+
+- SAM Policy Templates:
+  - List of templates to apply permissions to your Lambda Functions
+
+- **SAM and CodeDeploy**
+  - SAM framework natively uses CodeDeploy to update Lambda functions
+
+![SAM & CodeDeploy](./images/sam.png)
+
+## 22. Cognito
+
+- **Cognito User Pools:**
+  - Sign in functionality for app users
+  - Integrate with API Gateway & Application Load Balancer
+- **Cognito Identity Pools** (Federated Identity):
+  - Provide `AWS credentials` to users so they can access AWS resources directly
+  - Integrate with Cognito User Pools as an identity provider
+- **Cognito Sync**:
+  - Synchronize data from device to Cognito.
+  - Is deprecated and replaced by AppSync
+  - Cognito vs IAM: `hundreds of users`, `mobile users`, `authenticate with SAML`
+
+\* *Cognito User Pools*
+![CUP](./images/CUP.png)
+
+- Create a serverless database of user for your web & mobile apps
+- Login sends back a JSON Web Token (JWT)
+- Simple login: Username (or email) / password
+- CUP integrates with **API Gateway** and **Application Load Balancer**
+- Hosted Authentication UI
+
+\* *Cognito Identity Pools*
+
+- Get identities for `users` so they obtain `temporary AWS credentials`
+
+\* *Cognito Identity Pools – IAM Roles*
+
+- Default IAM roles for authenticated and guest users
+- Define rules to choose the role for each user based on the user’s ID
+- You can partition your users’ access using `policy variables`
+
+\* *Cognito Sync - AWS AppSync*
+
+- Store preferences, configuration, state of app
+- Cross device synchronization
+- `Push Sync`: silently notify across all devices when identity data changes
+- `Cognito Stream`: stream data from Cognito into Kinesis
+- `Cognito Events`: execute Lambda functions in response to events
+
+
+---------------------
+
+## 23. Other serverless
+
+\* *Step Functions*
+
+- Build serverless visual workflow to orchestrate your `Lambda functions`
+- `Standard` vs `Express` (cheaper, intended for large number & small duration.)
+
+\* *AppSync*
+
+- AppSync is a managed service that uses `GraphQL`
+- GraphQL makes it easy for applications to get `exactly` the data they need
+- Retrieve data in real-time with WebSocket or MQTT on WebSocket
+- It all starts with uploading one `GraphQL schema`
+- **Security**
+  - API_KEY
+  - AWS_IAM
+  - OPENID_CONNECT
+  - AMAZON_COGNITO_USER_POOLS
+
+## 24. Advanced Identity Section
+
+- Never ever ever store IAM key credentials on any machine but a personal computer or on-premise server
+- If there’s an explicit DENY, end decision and DENY
+
+\* *STS – Security Token Service*
+
+- Allows to grant limited and temporary access to AWS resources *(15m to 1 hour)*.
+- **AssumeRole**: Assume roles within your account or cross account
+- **GetSessionToken**: for MFA, from a user or AWS account root user
+- **GetFederationToken**: obtain temporary creds for a federated user
+- **GetCallerIdentity** return details about the IAM user or role used in the API call (whoami)
+- **DecodeAuthorizationMessage**: decode error message when an AWS API is denied
+
+\* *STS with MFA*
+
+- For ec2 instance.
+- Use `GetSessionToken` from STS
+- aws:MultiFactorAuthPresent:true
+
+\* *Dynamic Policies with IAM*
+
+- Leverage the special policy variable  `${aws:username}`
+- Inline policy:
+  - Strict one-to-one relationship between policy and principal 
+  - Policy is deleted if you delete the IAM principal
+
+\* *Granting a User Permissions to Pass a Role to an AWS Service*
+
+- To configure many AWS services, you must pass an IAM role to the service
+- The service will later assume the role and perform actions
+- For this, you need the IAM permission `iam:PassRole`
+- It often comes with `iam:GetRole` to view the role being passed
+- *Can a role be passed to any service ?*
+  - No: Roles can only be passed to what their trust allows
+  - A trust policy for the role that allows the service to assume the role
+
+\* *AWS Directory Service*
+
+![Directory service](./images/directory-service.png)
+
+
+## 24. Sercurity
+
+- KMS can only help in encrypting up to 4KB of data per call
+  
+- **Envelope Encryption**:
+  - If you want to encrypt >4 KB, we need to use Envelope Encryption
+  - Client side encryption
+  - GenerateDataKey API
+
+![Generate Envelope Encryption](./images/envelope.png)
+
+- To decrypt:
+  - Send envelope (encrypted DEK, file) to KMS to receive plaintext data key
+  - Decrypt big file at local
+
+\* *S3 Bucket Policies*
+
+- To force SSL, create an S3 bucket policy with a DENY on the condition `aws:SecureTransport = false`
+- Force Encryption of SSE-KMS
+  - Deny incorrect encryption header: make sure it includes aws:kms (== SSE-KMS)
+  - Deny no encryption header to ensure objects are not uploaded un-encrypted
+
+
+\* *AWS Secrets Manager*
+
+- Newer service, meant for storing secrets
+- Capability to force rotation of secrets every X days
+- Automate generation of secrets on rotation (uses Lambda)
+- Integration with Amazon RDS (MySQL, PostgreSQL, Aurora)
+- Secrets are encrypted using KMS
+- Mostly meant for RDS integration
+
+| SSM Parameter Store                                                                                                                                                    | Secrets Manager                                                                                                                                                           |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| • No secret rotation<br>• KMS encryption is optional<br>• Can integration with CloudFormation<br>• Can pull a Secrets Manager secret using the SSM Parameter Store API | • Automatic rotation of secrets with AWS Lambda<br>• Integration with RDS, Redshift, DocumentDB<br>• KMS encryption is mandatory<br>• Can integration with CloudFormation |
+
+\* *AWS Certificate Manager (ACM)*
+
+

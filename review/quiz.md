@@ -462,3 +462,69 @@ C. With a target group
 D. With ÁSG
 
 ANS: C
+
+---------------------
+**51. You would like to provide a Facebook login before your users call your API hosted by API Gateway. You need seamlessly authentication integration, you will use**
+
+A. Cogn sync
+B. DynamoDb
+C. Cognito User Pool
+D. Cognito Identity Pool
+
+ANS: C
+
+**52. What can you NOT customize in the Cognito hosted UI?**
+
+A. CSS
+B. Logo
+C. URL
+D. Underlying JS
+
+ANS: D
+
+**53. You need your clients to log in with Twitter and directly interact with your DynamoDB tables. You should use**
+
+A. Cogn sync
+B. DynamoDb
+C. Cognito User Pool
+D. Cognito Identity Pool
+
+ANS: C
+
+**54. Which of the following does NOT allow for a real-time WebSocket API?**
+
+A. ALB
+B. API Gateway
+C. AppSync
+D. DynamoDB
+
+ANS: D, DynamoDB on its own does not push changes to the users and does not have a two-way communication. It's just a request/response database
+
+**55. What's this IAM policy allowing you to do?**
+```
+{
+    "Version": "2012-10-17",
+    "Id": "Secret Policy",
+    "Statement": [
+        {
+            "Sid": "EC2",
+            "Effect": "Allow",
+            "Action": "ec2:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "Passrole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "arn:aws:iam:::role/RDS-*"
+        }
+    ]
+}
+```
+A. Allowing you to assign IAM Roles to EC2 if they start with "RDS-"
+B. Allowing you to give any role to RDS instances
+C. Allowing you to give RDS full access to EC2 instances
+
+ANS: A

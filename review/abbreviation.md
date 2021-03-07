@@ -32,6 +32,7 @@ CodeBuild, CodeDeploy, CloudFormation, CodePipeline, CloudWatch
 - **Beanstalk** deploy application safely & predictably.
 - **DAX** If RCU issue, we can use DynamoDB Accelerator (DAX)
 
+- **SAM** Serverless application model
 - **TDE** Transparent Data Encryption (way to protect RDS)
 - **ENI** Elastic Network Interface (VPC Endpoint Interface), logical networking component in a VPC that represents a virtual network card
 - **SDK** Software Development Kit
