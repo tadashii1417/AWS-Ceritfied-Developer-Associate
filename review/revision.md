@@ -607,7 +607,7 @@ def save_user(id, values):
 - Consider to put RDS inside or outside Beanstalk
 - In prod, create outside and using by connection string.
 
-\* *Elastic Beanstalk Deployment Modes:*
+\* ***Elastic Beanstalk Deployment Modes:***
 
 |                                     | Availability                         | Deployment time | Additional cost              | Other                                                                         |
 |-------------------------------------|--------------------------------------|-----------------|------------------------------|-------------------------------------------------------------------------------|
@@ -626,6 +626,38 @@ From AWS:
 - **Route 53** can be setup using **weighted policies** to redirect a little bit of traffic to the stage environment
 - Using **Beanstalk**, “*swap URLs*” when done with the environment test
 
+\* Elastic Beanstalk Deployment Process
+
+- Describe dependencies (`requirements.txt` for Python, `package.json` for Node.js)
+- **Package code as zip**, and describe dependencies
+- *Elastic Beanstalk will deploy the zip on each EC2 instance, resolve dependencies and start the application*
+
+\* *Elastic Beanstalk Cloning*
+
+- Clone an environment with the exact same configuration
+- Useful for deploying a “test” version of your application
+- All resources and configuration are preserved:
+  - Load Balancer type and configuration
+  - RDS database type (but the data is not preserved)
+  - Environment variables
+
+\* *Elastic Beanstalk Migration: Load Balancer*
+
+- After creating an Elastic Beanstalk environment, you cannot change the Elastic Load Balancer type
+- To migrate:
+  - 1. create a new environment with the same configuration except LB (can’t clone)
+  - 2. deploy your application onto the new environment
+  - 3. perform a CNAME swap or Route 53 update 
+
+\* *Elastic Beanstalk Migration: Decouple RDS*
+
+1. Create a snapshot of RDS DB (as a safeguard)
+2. Go to the RDS console and protect the RDS database from deletion
+3. Create a new Elastic Beanstalk environment, without RDS, point your application to existing RDS
+4. perform a CNAME swap (blue/green) or Route 53 update, confirm working
+5. Terminate the old environment (RDS won’t be deleted)
+6. Delete CloudFormation stack (in DELETE_FAILED state)
+
 \* ***Elastic Beanstalk Extensions***
 
 - A zip file containing our code must be deployed to Elastic Beanstalk
@@ -635,12 +667,19 @@ From AWS:
   - YAML / JSON format
   - **.config** extensions (example: logging.config)
   - Able to modify some default settings using: option_settings
-  - Ability to add resources such as RDS, ElastiCache, DynamoDB, etc (using CloudFormation)
-  - You can define periodic tasks in a file **cron.yaml**
+  - Ability to add resources such as RDS, ElastiCache, DynamoDB, etc (using `CloudFormation`)
+  - ***You can define periodic tasks in a file*** **cron.yaml**
 
-- Under the hood, Elastic Beanstalk relies on CloudFormation
-- CloudFormation is used to provision other AWS services
+- Under the hood, Elastic Beanstalk relies on CloudFormation, to provision other AWS services
 - After creating an Elastic Beanstalk environment, you **cannot** change the Elastic Load Balancer type
+
+\*  *Beanstalk with HTTPS*
+
+- Idea: Load the SSL certificate onto the Load Balancer
+- Can be done from the Console (EB console, load balancer configuration)
+- Can be done from the code: `.ebextensions/securelistener-alb.config`
+- SSL Certificate can be provisioned using ACM (AWS Certificate Manager) or CLI
+- Must configure a security group rule to allow incoming port 443 (HTTPS port)
 
 \* *Elastic Beanstalk – Single Docker*
 
