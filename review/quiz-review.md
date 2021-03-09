@@ -28,11 +28,11 @@ Chapter notes:
 - [ ] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
 - [X] **CloudFormation**
 - [ ] **CloudWatch, X-Ray & CloudTrail**
-- [ ] SQS, SNS, Kinesis
+- [ ] **SQS, SNS, Kinesis**
 - [ ] **Lambda**
 - [ ] DynamoDB
 - [ ] **API Gateway**
-- [ ] SAM
+- [ ] **SAM**
 - [ ] Cognito
 - [ ] Others: Step Function, AppSync
 - [ ] Advanced Identity
