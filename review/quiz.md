@@ -463,6 +463,43 @@ D. With ÁSG
 
 ANS: C
 
+-------------------
+
+**51. You would like to perform an efficient Query on an attribute that is not part of your table's primary key. What do you recommend?**
+
+A. Open a ticket
+B. Local secondary index
+C. Global secondary index
+
+ANS: C
+
+**52. You would like to have query for a non key attribute for the >= predicate while keeping the same partition key. You should**
+
+A. Open a ticket
+B. LSI
+C. GSI
+
+ANS: B
+
+**53. Which concurrency model can be implemented with DynamoDB?**
+
+A. Optimistic locking
+B. Pessimistic locking
+C. No
+
+ANS: A
+
+**54. You would like to paginate the results of a DynamoDB scan in order to minimize the amount of RCU that you will use for that CLI command. Which CLI options should you use?**
+
+A. --page-size & --max-item
+B. --page-size & --starting-token
+C. --max-items & --starting-token
+D. --filter-expression
+
+ANS: C
+
+
+
 ---------------------
 **51. You would like to provide a Facebook login before your users call your API hosted by API Gateway. You need seamlessly authentication integration, you will use**
 
