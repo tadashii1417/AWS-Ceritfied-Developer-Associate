@@ -11,8 +11,6 @@
 - [ ] Domain 4: Refactoring 10%
 - [ ] Domain 5: Monitoring and Troubleshooting 12%
 
-Chapter notes:
-
 - [ ] IAM + EC2
 - [ ] ELB + ASG
 - [ ] EBS & EFS
@@ -28,7 +26,7 @@ Chapter notes:
 - [X] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
 - [X] **CloudFormation**
 - [X] **CloudWatch, X-Ray & CloudTrail**
-- [ ] **SQS, SNS, Kinesis**
+- [X] **SQS, SNS, Kinesis**
 - [ ] **Lambda**
 - [ ] DynamoDB
 - [ ] **API Gateway**
@@ -38,11 +36,6 @@ Chapter notes:
 - [ ] Advanced Identity
 - [ ] AWS Security
 
-
-- SQS
-    - VisibilityTimeout
-    - DelayQueue
-    
 + Deployment
     - deploy sử dụng Elastic Beanstack, Cloud Formation, CodeDeploy, CodePipeline
     - các deployment strategies: all-at-once, rolling, blue-green,...
