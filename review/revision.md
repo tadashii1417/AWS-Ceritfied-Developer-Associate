@@ -520,9 +520,14 @@ def save_user(id, values):
   - EC2 instances run the ECS agent (Docker container), and have `escInstanceRole`
   - The ECS agents registers the instance to the ECS cluster
   - EC2 instances can run multiple containers on the same type
-  - The EC2 instances run a special AMI, made specifically for ECS
-  - EC2 instances must be created
-  - We must configure `ecs.config` with the cluster name
+  - *The EC2 instances run a special AMI, made specifically for ECS*
+  - ***EC2 instances must be created***
+  - *We must configure `ecs.config` with the cluster name*
+    - ECS_ENABLE_TASK_IAM_ROLE: ECS tasks to endorse IAM roles
+  - EC2 instances can run multiple containers on the same type:
+    - You must not specify a host port (only container port)
+    - You should use an Application Load Balancer with the dynamic port mapping
+    - *The EC2 instance security group must allow traffic from the ALB on all ports*
 
 - **ECS Task Definitions**:
   - Tasks definitions are metadata in JSON form to tell ECS how to run a Docker Container
@@ -565,9 +570,17 @@ def save_user(id, values):
     - Place the task evenly based on the specified value
     - Maximizing the high avaiability of ECS
   - You can mix them together
+  - *Note: this is only for ECS with EC2, not for Fargate*
 
-- *ECS - Service Auto Scaling* based on Target Tracking, Step Scaling, Scheduled Scaling
-- Cluster Auto Scaling through Capacity Providers.
+- ***Exam TIPS***:
+- ECS does integrate with CloudWatch Logs:
+  - You need to setup logging at the task definition level
+  - Each container will have a different log stream
+  - The EC2 Instance Profile needs to have the correct IAM permissions
+- Use IAM Task Roles for your tasks
+- Task Placement Strategies: binpack, random, spread
+- Service Auto Scaling with target tracking, step scaling, or scheduled
+- Cluster Auto Scaling through Capacity Providers
 
 ---------------
 
@@ -717,35 +730,42 @@ From AWS:
 ## 16. AWS CloudFormation
 
 - ***Templates have to be uploaded in S3*** and then referenced in CloudFormation
+- To update a template, we can’t edit previous ones. We have to re-upload a new version of the template to AWS
 - YAML and JSON are the languages you can use for CloudFormation.
-- Everything in the CloudFormation template has to be declared. You can’t perform code generation there (variable)
-- The `Fn::Ref` function can be leveraged to reference parameters
+
+- Templates components
+  - 1. **Resources**: (MANDATORY)
+  - 2. **Parameters**: the *dynamic* inputs
+    - Use parameters when the values are really user specific
+    - `Fn::Ref` function can be leveraged to reference *parameters & resource*
+  - 3. **Mappings**: the *static* variables
+    - Mappings are great when you know in advance all the values that can be taken and that they can be deduced from variables such as region, az, env, ...
+    - `!FindInMap [ MapName, TopLevelKey, SecondLevelKey, ... ]` *not including mappings keyword*
+  - 4. **Outputs**: reference to exported from other stack
+    - You can’t delete a CloudFormation Stack if its outputs are being referenced by another CloudFormation stack
+    - `!ImportValue [Name]` get exported value from other stack.
+  - 5. **Conditionals**:
+    - list of conditions to perform ***resource creation or output***
+    - each condition can reference another condition, parameter value or mapping
+  - 6. Metadata
+
 - `Pseudo Parameters`: AccountId, NotificationARNs, NoValue, Region, StackId, StackName
-- `Mappings` are fixed variables within your CloudFormation Template
-- `Outputs` section declares optional outputs values that we can import into other stacks (if you export them first)!
-- `Conditions` are used to control the creation of resources or outputs based on a condition.
-
-\* *Important functions:*
-
-- `!FindInMap [ MapName, TopLevelKey, SecondLevelKey, ... ]`
-- `!ImportValue [Name]` get exported value from other stack.
 - `!GetAtt resource.att` Get any attribute of a resource.
+
+- **ChangeSet**: When you update a stack, you need to know what changes before it happens for greater confidence
 
 \* *Nested stacks vs Cross Stacks*
 
+- To update a nested stack, always update the parent (root stack)
+
 | Cross stack                                        | Nested stack                            |
 |----------------------------------------------------|-----------------------------------------|
+|      | Nested stacks are stacks as part of other stacks |
 | Helpful when stacks have different life cycles     | Helpful when components must be re-used |
 | Use exported value by Fn::ImportValue              | ex: Re-use configuration of an ALB      |
-| When you need to pass export values to many stacks | All about reusable                      |
+| When you need to pass export values to many stacks | All about reusable, is recommended, best practice                   |
 
-\* *ChangeSets* ~ dry run
-
-- When you update a stack, you need to know what changes before it happens for greater confidence
-
-\* ***StackSets***
-
-- Create, update, or delete stacks across **multiple accounts and regions** with a single operation
+\* ***StackSets*** Create, update, or delete stacks across **multiple accounts and regions** with a single operation
 
 ## 17. AWS Monitoring, Troubleshooting & Audit
 
@@ -1506,3 +1526,12 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 \* *AWS Certificate Manager (ACM)*
 
 
+## Other Confuse Things
+
+### Security Groups vs IAM Groups
+
+- Security groups are like a firewall for your EC2 instances. They determine:
+    - which computers can connect to your EC2 instance
+    - on which ports other computers can connect
+
+- The security groups say nothing about which **people** can connect to your EC2 instance.
