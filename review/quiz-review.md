@@ -24,7 +24,7 @@ Chapter notes:
 - [ ] Advanced S3 & Athena
 - [ ] CloudFront
 - [X] **ECS, ECR & Fargate**
-- [ ] **Beanstalk**
+- [X] **Beanstalk**
 - [ ] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
 - [X] **CloudFormation**
 - [ ] **CloudWatch, X-Ray & CloudTrail**
