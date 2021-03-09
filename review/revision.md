@@ -728,30 +728,56 @@ From AWS:
 ![Tech Stack for CICD](./images/tech-stack-cicd.png)
 
 - **CodeCommit**:
-  - You can trigger notifications in CodeCommit using AWS SNS or AWS Lambda or AWS CloudWatch Event Rules.
+  - **Authentication in Git**:
+    - **SSH Keys**: AWS Users can configure SSH keys in their IAM Console
+    - **HTTPS**: Done through the AWS CLI Authentication helper or Generating HTTPS credentials
+    - **MFA** (multi factor authentication) can be enabled for extra safety
+  - *You can trigger notifications in CodeCommit using*
+    - AWS SNS / AWS Lambda
+    - AWS CloudWatch Event Rules.
+  - **Use case:**
+    - ***AWS SNS / AWS Lambda*** :
+      - Deletion of branches
+      - Trigger for pushes that happens in master branch
+      - Notify external Build System
+      - *Trigger AWS Lambda function to perform codebase analysis* (maybe credentials got
+    - **CloudWatch Event Rules**:
+      - Trigger for pull request updates (created / updated / deleted / commented)
+      - Commit comment events
+      - CloudWatch Event Rules goes into an SNS topic committed in the code?)
+
+
 - **CodePineline**
-  - Each pipeline stage can create `artifacts`, are passed stored in Amazon S3 and passed on to the next stage
+  - Each pipeline stage can create `artifacts`, are **passed stored in Amazon S3** and passed on to the next stage
+  - CodePipeline state changes happen in ***AWS CloudWatch Events***, which can in return create SNS notifications.
+    - Ex: you can create events for failed pipelines
+    - Ex: you can create events for cancelled stages 
+
 - **CodeBuild**:
   - Build instructions can be defined in code (`buildspec.yml` file)
     - Phrases: `Install`, `Pre Build`, `Build`, `Post Build`
-  - Builds can be defined within CodePipeline or CodeBuild itself
-  - Java, Ruby, Python, Go, Nodejs, Android, .NET, PHP, Docker (extend any environment)
+    - Can enable dependencies cache in S3 in `buildspec.yml` to boost the process.
+  - CodeBuild containers are deleted at the end of their execution (success or failed). You can't SSH into them, even while they're running
+  - *Builds can be defined within CodePipeline or CodeBuild itself*
+  - Java, Ruby, Python, Go, Nodejs, Android, .NET, PHP, **Docker** (extend any environment)
+  - `buildspec.yml` file must be at the root of your code
   - CodeBuild run on docker
+  - *You can run CodeBuild locally on your deskto*p (after installing Docker)
 ![How CodeBuild work](./images/codebuild-work.png)
 
 - **CodeDeploy**
-  - Each EC2 Machine (or On Premise machine) must be running the CodeDeploy Agent
+  - *Each EC2 Machine (or On Premise machine) must be running the CodeDeploy Agent*
   - The agent is continuously polling AWS CodeDeploy for work to do
   - CodeDeploy sends `appspec.yml` file. *(Application Revision = Code + appspec)*
   - **EC2** will run the deployment instructions
   - CodeDeploy Agent will report of success / failure of deployment on the instance
-  - EC2 instances are grouped by deployment group (dev / test / prod)
-  - Blue / Green only works with EC2 instances (not on premise)
+  - EC2 instances are grouped by **deployment group** (dev / test / prod)
+  - **Blue / Green only works with EC2 instances (not on premise)**
 ![How CodeDeploy work](./images/codedeploy-work.png)
 
 - **AWS CodeDeploy AppSpec**
-  - how to source and copy from S3 / GitHub to filesystem
-  - Hooks: the order is
+  - *how to source and copy from S3 / GitHub to filesystem*
+  - **CodeDeploy Hooks**: the order is
     - **ApplicationStop**
     - DownloadBundle
     - BeforeInstall
@@ -759,10 +785,15 @@ From AWS:
     - **ApplicationStart**
     - **ValidateService**
 
-- CodeDeloy Deployment methods:
-  - In Place Deployment – Half at a time
-  - Blue Green Deployment
+- *CodeDeloy Deployment methods*:
+  - **In Place Deployment** – Half at a time
+  - **Blue Green Deployment**
 
+- *AWS CodeDeploy Deployment Config*
+  - **Failures**:
+    - Instances stay in “failed state”
+    - New deployments will first be deployed to “failed state” instances
+    - To rollback: `redeploy old deployment` or enable `automated rollback` for failures.If a roll back happens, CodeDeploy redeploys the last known good revision as a **new deployment**.
 - **CodeStar**
   - CodeStar is an integrated solution that regroups: GitHub, CodeCommit, CodeBuild, CodeDeploy, CloudFormation, CodePipeline, CloudWatch
 
@@ -810,10 +841,10 @@ From AWS:
 
 - AWS **CloudWatch**:
   - *Metrics*: Collect and track key metrics
-    - With detailed monitoring, you get data `every 1 minute` (default 5)
+    - With `detailed monitoring`, you get data `every 1 minute` (default is `5 minutes`)
   - *Logs*: Collect, monitor, analyze and store log files
   - *Events*: Send notifications when certain events happen in your AWS
-  - *Alarms*: React in real-time to metrics / events
+  - ***Alarms***: React in real-time to metrics / events
 - AWS **X-Ray**:
   - Troubleshooting *application performance and errors*
   - Distributed tracing of microservices
@@ -822,22 +853,18 @@ From AWS:
   - Audit changes to AWS Resources by your users, history of events / API calls made within your AWS Account
   *- If a resource is deleted in AWS, look into CloudTrail first!*
 
-\* *CloudWatch Custom Metrics*
+\* *CloudWatch Custom **METRICS***
 
 - Metric resolution (StorageResolution API parameter – two possible value):
-  - **Standard**: 1 minute (60 seconds)
-  - **High Resolution**: 1 second – Higher cost
+  - **Standard**: 1 minute (`60s`)
+  - **High Resolution**: `1s` – Higher cost
 - Use API call `PutMetricData`
 - Use exponential back off in case of throttle errors
 
-\* AWS CloudWatch Alarms
+\* AWS CloudWatch **ALARM**
 
-- Alarm states:
-  - OK
-  - INSUFFICIENT_DATA
-  - ALARM
-- Period:
-  - *High resolution custom metrics*: 10sec or 30sec
+- Alarm states:OK, INSUFFICIENT_DATA, ALARM
+- ***High resolution** custom metrics*: 10sec or 30sec
 
 \* *CloudWatch Logs for EC2*
 
@@ -870,13 +897,13 @@ From AWS:
 
 - Debugging in Production
 - Tracing is an end to end way to following a “request”
-- How to enable X-Ray
+- **How to enable X-Ray**
   - Import X-Ray SDK in code
   - Install the X-Ray daemon or enable X-Ray AWS Integration
     - X-Ray daemon works as a low level UDP packet interceptor (Linux / Windows / Mac…)
-    - AWS Lambda / other AWS services already run the X-Ray daemon for you
+    - *AWS Lambda / other AWS services already run the X-Ray daemon for you*
 
-- To enable on:
+- **Enable on**:
   - **Lambda** make sure function import x-ray
   - **Beanstalk** config in file `.ebextensions/xray-daemon.config`
 ![How to enable X-Ray](./images/x-ray.png)
@@ -886,7 +913,7 @@ From AWS:
     - *Subsegments*: if you need more details in your segment
     - *Trace*: segments collected together to form an end-to-end trace
     - ***Sampling***: decrease the amount of requests sent to X-Ray, reduce cost
-    - *Annotations*: Key Value pairs used to index traces and use with filters
+    - ***Annotations***: Key Value pairs used to index traces and use with filters
     - *Metadata*: Key Value pairs, not indexed, not used for searching
 
 - Commons APIs:
@@ -903,12 +930,14 @@ From AWS:
 
 ### 17.1 Amazon SQS
 
-- Default retention of messages: 4 days, maximum 14 days
+- ***Scale automatically.***
+- **Default** retention of messages: `4 days`, maximum `14 days`
+- Limitation of `256KB` per message sent
 - Producing messages by:
   - Using the SDK (SendMessage API)
 - Consuming Messages:
   - Consumers: EC2 instances, servers, AWS Lambda, ...
-  - Poll SQL for messages (up to 10 at a time)
+  - Poll SQL for messages (up to `10 message` at a time)
   - Delete the messages using `DeleteMessage` API
 
 - **SQS Access Policies**
@@ -916,11 +945,12 @@ From AWS:
   - Useful for cross-account access to SQS queue
   - Useful for allowing other services to write on queue
 
-- **Message Visibility Timeout** 
+- **MessageVisibilityTimeout** 
   - After polling, message become "invisible" to others
-  - By default: `30s`, that means the message has 30s to processed
+  - **By defaul**t: `30s`, that means the message has 30s to processed
   - After that, it become `visible` to other again.
   - => *If message is not processed within visibility timeout, it will be processed **twice***
+  - A consumer could call the **ChangeMessageVisibility** API to get more time
   - If timeout is `high` => crash, re-processing take time
   - If timeout is `low`  => may get duplicate
 
@@ -929,7 +959,7 @@ From AWS:
   - Good to set a retention of 14 days.
 
 - **Delay Queue**
-  - Delay a message up to 15m
+  - Delay a message up to **15m**
   - Default is 0s (available)
   - Can set a default at queue level
   - Can override the default by using `DelaySeconds` parameter.
@@ -937,33 +967,32 @@ From AWS:
 - **Long Polling**
   - If queue empty, optionally `wait` for messages.
   - **Descrease the number of API calls**, increase the efficiency & latency of your application
-  - From 1s to 20s
+  - From `1s` to `20s`
   - Long Polling is preferable to Short Polling
   - Can be enable at queue level with `WaitTimeSeconds`
 
 - **SQS Extended Client**
-  - Message size limit is 256KB
-  - With BIG file => Extended Client
+  - Message size limit is `256KB`
+  - With BIG file => `Extended Client`
   - The idea is: only send metadata to queue, and consumer using that metadata to retrieve from S3
 
 - Must known APIS
   - `CreateQueue` (MessageRetentionPeriod), `DeleteQueue`
   - `PurgeQueue`: delete all the messages in queue
   - `SendMessage` (DelaySeconds), `ReceiveMessage`, `DeleteMessage`
-  - `ReceiveMessageWaitTimeSeconds`: Long Polling
-  - `ChangeMessageVisibility`: change the message timeout
-  - Batch APIs for SendMessage, DeleteMessage, ChangeMessageVisibility
-helps decrease your costs
+  - **`ReceiveMessageWaitTimeSeconds`**: Long Polling
+  - **`ChangeMessageVisibility`**: change the message timeout
+  - Batch APIs for SendMessage, DeleteMessage, ChangeMessageVisibility helps decrease your costs
 
-- SQS FIFO Queue:
-  - Exactly-once send capability by removing duplicate
-  - De-duplication interval is 5 minutes (no dup)
+- **SQS FIFO Queue**:
+  - **Exactly-once send capability** by removing duplicate
+  - **De-duplication interval** is 5 minutes (no dup)
     - Content-base: do a hash on message body
     - Explicitly provide ID
   - Message Grouping
-    - By using same value `MessageGroupID`
+    - By using same value `**MessageGroupID**`
     - Each group may have different consumer
-    - Ordering is not guaranteed.
+    - *Ordering is not guaranteed.*
     - Each group can be processed by different consumers.
 
 ### 17.2 Amazon SNS (Pub/Sub)
@@ -1001,10 +1030,10 @@ helps decrease your costs
 
 - Streams are devided in ordered `Shards/Partition`
   - `Records` are ordered per SHARD
-- Data retention is 1 day by default (max 7 days)
+- Data retention is `1 day` by default (max `7 days`)
 - ***Ability to reprocess/replay data***
 - Multiple applications can consume the same stream.
-- Once data is inserted in Kinesis, it can't be deleted
+- Once data is inserted in Kinesis, `it can't be deleted`
 - **Put records**
   - `Partition Key` get hashed to determine SHARD ID
   - Choose a key that highly distributed
@@ -1017,7 +1046,10 @@ helps decrease your costs
 - KCL is a **Java** library that read record from Kinesis Stream
 - **Rule**: *each shard is be read only once KCL instances*
 - 4 shards = **max** 4 KCL instances
-- **progress** is checkpointed into **DynamoDB**
+- Records are read in **order** at the • Records are read in order at the **shard level**
+- **progress** is checkpointed into **DynamoDB**:
+  - KCL uses DynamoDB to checkpoint offsets
+  - KCL uses DynamoDB to track other workers and share the work amongst shards
 
 ### 17.4 Others
 

@@ -25,9 +25,9 @@ Chapter notes:
 - [ ] CloudFront
 - [X] **ECS, ECR & Fargate**
 - [X] **Beanstalk**
-- [ ] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
+- [X] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
 - [X] **CloudFormation**
-- [ ] **CloudWatch, X-Ray & CloudTrail**
+- [X] **CloudWatch, X-Ray & CloudTrail**
 - [ ] **SQS, SNS, Kinesis**
 - [ ] **Lambda**
 - [ ] DynamoDB
