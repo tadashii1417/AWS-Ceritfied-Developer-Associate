@@ -1282,13 +1282,13 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 \* *LSI (Local Secondary Index)*
 
-- Alternate range key for your table, local to the hash key (except: partition + range key)
+- *Alternate range key for your table*, local to the hash key (except: partition + range key)
 - **LSI must be defined at table creation time**
 - Uses the WCU and RCU of the main table (No special throttling considerations)
 
 \* *GSI (Global Secondary Index)*
 
-- To speed up queries on non-key attributes, use a Global Secondary Index
+- **To speed up queries on non-key attributes**, use a Global Secondary Index
 - GSI = partition key (***can be new***) + `optional` sort key
 - Literally create a new `table` with:
   - Partition key + Optional Sort key
@@ -1473,9 +1473,9 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 - SAM is built on CloudFormation, is a shortcut of CloudFormation
 - All the configuration is YAML code
-- SAM requires the Transform and Resources sections
-- Generate complex CloudFormation from simple SAM YAML file
+- SAM requires the **Transform** and **Resources** sections
 - SAM is integrated with CodeDeploy to do deploy to Lambda aliases
+- ***SAM can help you to run Lambda, API Gateway, DynamoDB locally***
 
 - Recipe:
   - Transform Header indicates it’s SAM template `Transform: 'AWS::Serverless-2016-10-31'`
@@ -1483,9 +1483,9 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
     - AWS::Serverless::Function => Lambda
     - AWS::Serverless::Api => API gateway
     - AWS::Serverless::SimpleTable => DynamoDb
-  - Package & Deploy:
+  - **Package & Deploy:**
     - `sam build`  fetch dependencies and create local deployment artifacts
-    - `aws cloudformation package` = `sam package`
+    - `aws cloudformation package` = `sam package`:  package and upload to Amazon S3, generate CloudFormation template
     - `aws cloudformation deploy` = `sam deploy` deploy to CloudFormation
 
 - SAM Policy Templates:
@@ -1545,27 +1545,30 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 - Build serverless visual workflow to orchestrate your `Lambda functions`
 - `Standard` vs `Express` (cheaper, intended for large number & small duration.)
+- *Retrying failures - Retry*: IntervalSeconds, MaxAttempts, BackoffRate
+- Moving on - Catch
 
 \* *AppSync*
 
-- AppSync is a managed service that uses `GraphQL`
+- AppSync is a managed service that uses **GraphQL**
 - GraphQL makes it easy for applications to get `exactly` the data they need
 - Retrieve data in real-time with WebSocket or MQTT on WebSocket
+- For mobile apps: `local data access & data synchronization`
 - It all starts with uploading one `GraphQL schema`
 - **Security**
   - API_KEY
   - AWS_IAM
-  - OPENID_CONNECT
+  - OPENID_CONNECT : OpenID Connect provider / JSON Web Token
   - AMAZON_COGNITO_USER_POOLS
 
 ## 24. Advanced Identity Section
 
-- Never ever ever store IAM key credentials on any machine but a personal computer or on-premise server
+- Never ever ever store IAM key credentials on any machine but *a personal computer or on-premise server*
 - If there’s an explicit DENY, end decision and DENY
 
 \* *STS – Security Token Service*
 
-- Allows to grant limited and temporary access to AWS resources *(15m to 1 hour)*.
+- Allows to grant limited and temporary access to AWS resources ***15m to 1 hour***.
 - **AssumeRole**: Assume roles within your account or cross account
 - **GetSessionToken**: for MFA, from a user or AWS account root user
 - **GetFederationToken**: obtain temporary creds for a federated user
@@ -1577,6 +1580,12 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - For ec2 instance.
 - Use `GetSessionToken` from STS
 - aws:MultiFactorAuthPresent:true
+
+\* *IAM Best Practices – Cross Account Access*
+
+- Define an IAM Role for another account to access
+- Define which accounts can access this IAM Role
+- Use AWS STS (Security Token Service) to retrieve credentials and impersonate the IAM Role you have access to (AssumeRole API)
 
 \* *Dynamic Policies with IAM*
 
@@ -1592,8 +1601,8 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - For this, you need the IAM permission `iam:PassRole`
 - It often comes with `iam:GetRole` to view the role being passed
 - *Can a role be passed to any service ?*
-  - No: Roles can only be passed to what their trust allows
-  - A trust policy for the role that allows the service to assume the role
+  - **No**: Roles can only be passed to what **their trust allows**
+  - A **trust policy** for the role that allows the service to assume the role
 
 \* *AWS Directory Service*
 
@@ -1602,12 +1611,11 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 ## 24. Sercurity
 
-- KMS can only help in encrypting up to 4KB of data per call
+- Anytime you hear “encryption” for an AWS service, it’s most likely KMS
+- KMS can only help in encrypting up to **4KB** of data per call
   
 - **Envelope Encryption**:
-  - If you want to encrypt >4 KB, we need to use Envelope Encryption
-  - Client side encryption
-  - GenerateDataKey API
+  - anything over 4 KB of data that needs to be encrypted must use the **Envelope Encryption** == **GenerateDataKey API**
 
 ![Generate Envelope Encryption](./images/envelope.png)
 
@@ -1615,29 +1623,60 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - Send envelope (encrypted DEK, file) to KMS to receive plaintext data key
   - Decrypt big file at local
 
+\* *KMS Request Quotas*
+
+- When you exceed a request quota, you get a ThrottlingException:
+- To respond, use `exponential backoff` (backoff and retry)
+- **You can request a Request Quotas increase through API or AWS support**
+
 \* *S3 Bucket Policies*
 
-- To force SSL, create an S3 bucket policy with a DENY on the condition `aws:SecureTransport = false`
+- **To force SSL**, create an S3 bucket policy with a DENY on the condition `aws:SecureTransport = false`
 - Force Encryption of SSE-KMS
   - Deny incorrect encryption header: make sure it includes aws:kms (== SSE-KMS)
   - Deny no encryption header to ensure objects are not uploaded un-encrypted
 
+\* *SSM Parameter Store*
+
+- Secure storage for configuration and secrets
+- Allow to assign a TTL to a parameter (expiration date) to force updating or deleting sensitive data such as passwords
 
 \* *AWS Secrets Manager*
 
 - Newer service, meant for storing secrets
-- Capability to force rotation of secrets every X days
-- Automate generation of secrets on rotation (uses Lambda)
+- Capability to force **rotation of secrets** every X days
+- **Automate generation of secrets on rotation (uses Lambda)**
 - Integration with Amazon RDS (MySQL, PostgreSQL, Aurora)
 - Secrets are encrypted using KMS
-- Mostly meant for RDS integration
 
 | SSM Parameter Store                                                                                                                                                    | Secrets Manager                                                                                                                                                           |
 |------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| • No secret rotation<br>• KMS encryption is optional<br>• Can integration with CloudFormation<br>• Can pull a Secrets Manager secret using the SSM Parameter Store API | • Automatic rotation of secrets with AWS Lambda<br>• Integration with RDS, Redshift, DocumentDB<br>• KMS encryption is mandatory<br>• Can integration with CloudFormation |
+| • No secret rotation<br>• KMS encryption is optional<br>• Can integration with CloudFormation<br>• Can pull a Secrets Manager secret using the SSM Parameter Store API | • Automatic rotation of secrets with AWS Lambda<br>• Integration with RDS, Redshift, DocumentDB<br>• KMS encryption is **MANDATORY**<br>• Can integration with CloudFormation |
+
+\* *CloudWatch Logs - Encryption*
+
+- You can encrypt CloudWatch logs with KMS keys
+- *You cannot associate a CMK with a log group using the CloudWatch console.*
+- `associate-kms-key` for existing
+- `create-log-group` for non-exist.
+
+## Other services.
 
 \* *AWS Certificate Manager (ACM)*
 
+\* *AWS SWF – Simple Workflow Service*
+
+- **Code runs on EC2 (not serverless)**
+- 1 year max runtime
+- Step Functions is recommended to be used for new applications, **EXCEPT**:
+  - If you need external signals to intervene in the processes
+  - *If you need child processes that return values to parent processes*
+
+\* Other
+
+- **Redshift**: *OLAP – Online Analytic Processing*
+  - Data Warehousing / Data Lake
+  - Analytics queries 
 
 ## Other Confuse Things
 

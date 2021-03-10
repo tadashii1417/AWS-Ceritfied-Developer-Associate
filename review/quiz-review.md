@@ -30,11 +30,11 @@
 - [X] **Lambda**
 - [ ] DynamoDB
 - [X] **API Gateway**
-- [ ] **SAM**
+- [X] **SAM**
 - [ ] Cognito
 - [ ] Others: Step Function, AppSync
-- [ ] Advanced Identity
-- [ ] AWS Security
+- [X] **Advanced Identity**
+- [X] **AWS Security**
 
 + Deployment
     - deploy sử dụng Elastic Beanstack, Cloud Formation, CodeDeploy, CodePipeline
