@@ -842,7 +842,7 @@ From AWS:
 - AWS **CloudWatch**:
   - *Metrics*: Collect and track key metrics
     - With `detailed monitoring`, you get data `every 1 minute` (default is `5 minutes`)
-  - *Logs*: Collect, monitor, analyze and store log files
+  - *Logs*: Collect, monitor, analyze and store log files, **They never expire by default**
   - *Events*: Send notifications when certain events happen in your AWS
   - ***Alarms***: React in real-time to metrics / events
 - AWS **X-Ray**:
@@ -1350,6 +1350,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - Setup data mapping using `mapping templates` for the request & response
 ![Integration type - aws/http](./images/api-http/aws.png)
 - **AWS_PROXY (Lambda Proxy)**
+  - No mapping template, headers, query string parameters… are passed as arguments
 - **HTTP_PROXY**
   - No mapping template
   - The HTTP request is passed to the backend
@@ -1365,12 +1366,13 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 \* *Caching API responses*
 
-- Default TTL (time to live) is 300 seconds (min: 0s, max: 3600s)
+- **Default TTL** (time to live) is `300 seconds` (min: 0s, max: `3600s - 60m`)
 - **Caches are defined per stage**, possible to override cache settings per method
 - API Gateway Cache Invalidation 
   - Clients can invalidate the cache with header: `Cache- Control: max-age=0`
 
 \* *To configure a usage plan*
+
 1. Create one or more APIs, configure the methods to require an API key
 2. Generate or import API keys to distribute to application developers
 3. Create the usage plan with the desired throttle and quota limits.
@@ -1382,7 +1384,12 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **IntegrationLatency**: The time between when API Gateway relays a request to the backend and when it receives a response from the backend.
 - **Latency**: The time between when API Gateway receives a request from a client and when it returns a response to the client. 
 - `Latency` = `IntegrationLatency` + Others (authenticate, checking cache, mapping template, ...)
-- **API gateway timeout** is `29s` when `Latency` or `IntegrationLatency` >29s
+- **API gateway timeout** is `**29s**` when `Latency` or `IntegrationLatency` >29s
+
+\* *API Gateway Throttling*
+
+- Can set **Stage limit** & **Method limits** to improve performance
+- Or you can define **Usage Plans** to throttle per customer
 
 \* **API Gateway – Security**
 
