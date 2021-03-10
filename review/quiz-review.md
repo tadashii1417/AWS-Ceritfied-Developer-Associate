@@ -29,7 +29,7 @@
 - [X] **SQS, SNS, Kinesis**
 - [ ] **Lambda**
 - [ ] DynamoDB
-- [ ] **API Gateway**
+- [X] **API Gateway**
 - [ ] **SAM**
 - [ ] Cognito
 - [ ] Others: Step Function, AppSync

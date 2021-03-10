@@ -761,7 +761,7 @@ From AWS:
   - *Builds can be defined within CodePipeline or CodeBuild itself*
   - Java, Ruby, Python, Go, Nodejs, Android, .NET, PHP, **Docker** (extend any environment)
   - `buildspec.yml` file must be at the root of your code
-  - CodeBuild run on docker
+  - **CodeBuild run on docker**
   - *You can run CodeBuild locally on your deskto*p (after installing Docker)
 ![How CodeBuild work](./images/codebuild-work.png)
 
@@ -1082,7 +1082,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 ## 18 AWS Lambda
 
-- Short execution time (timeout 3s => 15m)
+- Short execution time (timeout **3s - 15m**)
 - **Synchronous** Invocations Service:
   - ELB (ALB)
   - API Gateway
@@ -1099,7 +1099,12 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - ALB Multi-header values
   - enable multi-value headers
 - Can by used with X-Ray by using SDK.
-- Layer: to re-use dependencies & sp other platform.
+- **• Important: Docker is not for AWS Lambda, it’s for ECS / Fargate**: Nodejs, java, python, golang, ruby, custom runtime api
+- **Layer**: to re-use dependencies & sp other platform.
+
+- *Lambda Integration with ALB*
+  - To expose a Lambda function as an HTTP(S) endpoint, You can use the Application Load Balancer (or an API Gateway)
+  - The Lambda function must be *registered* in a **target group**
 
 - **Lambda@Edge**
   - Run global AWS lambda alongside CloudFront CDN
@@ -1110,9 +1115,16 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
     - User authentication, authorization, ...
 ![Using lambda@edge as global application](./images/lambda_edge.png)
 
+- *Lambda – Asynchronous Invocations*
+  - Lambda attempts to retry on error: `3 tries total`, 1 minute wait after 1st , then 2 minutes wait
+  - Services:
+    - S3, SNS, Event/EventBridge
+    - If two writes are made to a single non- versioned object at the same time, it is possible that only a single event notification will be sent
+    - **If you want to ensure that an event notification is sent for every successful write, you can enable versioning on your bucket.**
+
 \* *Lambda - Event Source Mapping*
 
-- Applied for stream & queue:
+- **Applied for stream & queue**:
   - Kinesis Data Stream
   - SQS queue
   - DynamoDB stream
@@ -1128,6 +1140,18 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 - With asynchronous invocations can define destination for successful & failed event.
 - It is recommended using Desitination rather than DLQ
+
+\* Lambda Tracing with X-Ray
+
+- Enable in Lambda configuration (Active Tracing)
+- Runs the X-Ray daemon for you
+- Use AWS X-Ray SDK in Code
+- Ensure Lambda Function has a correct IAM Execution Role
+  - The managed policy is called AWSXRayDaemonWriteAccess
+- Environment variables to communicate with X-Ray
+  - _X_AMZN_TRACE_ID: contains the tracing header
+  - AWS_XRAY_CONTEXT_MISSING: by default, LOG_ERROR
+  - AWS_XRAY_DAEMON_ADDRESS: the X-Ray Daemon IP_ADDRESS:PORT
 
 \* ***Lambda in VPC***
 
@@ -1145,17 +1169,18 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **2 ways for lambda to access internet/resources**
   - Using **NAT gateway** in public subnet (Private -> NAT -> IGW -> Others) : can access Internet & AWS services
   - Using **VPC Endpoints**: can access AWS services (not internet)
-
+- **: Lambda - CloudWatch Logs works even without endpoint or NAT Gateway**
 
 \* *Lambda /tmp space: Execution context*
 
 - if your lambda function need to download big file to work or more disk space. 
 - used as `transient cache`: can be used for multiple invocations
 - for permanent cache => S3
+- max size 512MB
 
 \* *Lambda Concurrency and Throttling*
 
-- Can set a `reserved concurrency` at the function level (=limit)
+- Can set a `reserved concurrency` at the function level (=**limit**) to avoid an app use too much.
 - Throttle behavior:
   - If synchronous invocation => return ThrottleError - 429
   - If asynchronous invocation => retry automatically and then go to DLQ
@@ -1169,12 +1194,22 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 |--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | - New instance => code is loaded and code outside the handler run (init)<br>- If the init is large (code, dependencies, SDK…) this process can take some time.<br>- First request served by new instances has higher latency than the rest | - Concurrency is allocated before the function is invoked (in advance)<br>- So the cold start never happens and all invocations have low latency<br>- Application Auto Scaling can manage concurrency (schedule or target utilization) |
 
+\* *Lambda Function Dependencies*
+
+- You need to install the packages alongside your code and zip it together (node_modules, .jar file)
+- Upload the zip straight to Lambda if less than `50MB`, else to S3 first
+- Deployment:
+  - Lambda function deployment size (compressed .zip): 50 MB
+  - Size of uncompressed deployment (code + dependencies): 250 MB
+  - Can use the /tmp directory to load other files at startup
+  - *Size of environment variables: 4 KB*
+
 \* *AWS Lambda Aliases*
 
 - We can define a “dev”, ”test”, “prod” aliases and have them point at different lambda versions
 - Aliases** enable Blue / Green deployment** by assigning weights to lambda functions
 - Aliases have their own ARNs
-- Aliases cannot reference aliases
+- **Aliases cannot reference aliases**
 
 \* *Lambda & CodeDeploy*
 
