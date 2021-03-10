@@ -27,7 +27,7 @@
 - [X] **CloudFormation**
 - [X] **CloudWatch, X-Ray & CloudTrail**
 - [X] **SQS, SNS, Kinesis**
-- [ ] **Lambda**
+- [X] **Lambda**
 - [ ] DynamoDB
 - [X] **API Gateway**
 - [ ] **SAM**
