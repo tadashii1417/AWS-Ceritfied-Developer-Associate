@@ -982,6 +982,7 @@ From AWS:
   - `SendMessage` (DelaySeconds), `ReceiveMessage`, `DeleteMessage`
   - **`ReceiveMessageWaitTimeSeconds`**: Long Polling
   - **`ChangeMessageVisibility`**: change the message timeout
+    - Amazon SQS uses a visibility timeout to prevent other consumers from receiving and processing the same message. The default visibility timeout for a message is ***30 seconds. The minimum is 0 seconds. The maximum is 12 hours.***
   - Batch APIs for SendMessage, DeleteMessage, ChangeMessageVisibility helps decrease your costs
 
 - **SQS FIFO Queue**:
