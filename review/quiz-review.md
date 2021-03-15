@@ -14,7 +14,7 @@
 - [ ] IAM + EC2
 - [ ] ELB + ASG
 - [ ] EBS & EFS
-- [ ] RDS, Aurora, ElastiCache
+- [X] RDS, Aurora, ElastiCache
 - [ ] Route 53
 - [ ] VPC Fundamental
 - [ ] S3

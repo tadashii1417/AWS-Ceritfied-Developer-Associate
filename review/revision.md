@@ -197,9 +197,20 @@
 - Scaling capability (*vertical & horizontal*)
 - **BUT** you can't SSH into your instances.
 
+- **RDS Backups**
+  - Backups are automatically enabled in RDS
+  - Automated backups:
+    - Daily full backup of the database (during the maintenance window)
+    - Transaction logs are backed-up by RDS every 5 minutes
+    -  => ability to restore to any point in time (from oldest backup to 5 minutes ago)
+  - **7 days retention (can be increased to 35 days)**
+  - DB Snapshots:
+    - Manually triggered by the user
+    - *Retention of backup for as long as you want*
+
 - RDS Read Replica: 
   - within AZ-free, Cross AZ, Cross Region.
-  - Replication is ASYNC, so reads are consistent
+  - Replication is ASYNC,so reads are *eventually consistent*
   - Application must **update the connection string** to leverage
   
 - **RDS Multi AZ(Disaster Recovery)**
@@ -211,24 +222,33 @@
   - Note:The Read Replicas be setup as Multi AZ for Disaster Recovery (DR). Overally, multi AZ simply use for backup, just stay there, no one read, no one write in case of failover.
 
 - **RDS Encryption**
-  - If the master is not encrypted, the read replica cannot be encrypted.
-  - Transparent Data Encryption (TDE) only available for **Oracle & SQL Server.**
+  - If the master is not encrypted, the read replica **cannot** be encrypted.
+  - **Transparent Data Encryption (TDE)** only available for **Oracle & SQL Server.**
+
+- Encryption at rest:
+  - Is done only when you first create the DB instance
+  - or: unencrypted DB => **snapshot** => copy snapshot as encrypted => *create DB from snapshot*
+
+- Access Management
+  - IAM policies help control who can manage AWS RDS (through the RDS API)
+  - **Traditional Username and Password can be used to login into the database**
+  - IAM-based authentication can be used to login into RDS MySQL & PostgreSQL
 
 - **RDS Authentication**
-• IAM database authentication works with **MySQL and PostgreSQL**
-• You don’t need a password, just an authentication token obtained through IAM & RDS API calls
-• Auth token has a lifetime of 15 minutes
+  - IAM database authentication works with **MySQL and PostgreSQL**
+  - You don’t need a password, just an authentication token obtained through IAM & RDS API calls
+  - Auth token has a lifetime of **15 minutes**
 
 ### 6.2 Aurora
 
-- Postgres & MySQL are both supported by Aurora
+- **Postgres & MySQL** are both supported by Aurora
 - Cloud optimized, performance improvement RDS
 - 6 copies of your data accross 3 AZs.
 - Support for **Cross Region Replication**
 - Simply: Replication, Self-healing, Auto Expanding
 
 - **Aurora Serverless:**
-  - Automated database instantiation and auto scaling based on actual usage
+  - Automated database instantiation and auto scaling *based on actual usage*
   - Good for **infrequent**, intermittent or **unpredictable** workloads
   - No capacity planning needed
   - Pay per second, can be more cost effective
