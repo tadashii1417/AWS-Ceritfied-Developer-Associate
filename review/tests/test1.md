@@ -82,7 +82,7 @@ By setting the timeout configuration, the build process will automatically termi
 
 **A Dedicated Host** is also a physical server that's dedicated for your use. With a Dedicated Host, you have visibility and control over how instances are placed on the server.
 
-![Hostvs](./images/dedicated.png)
+![Hostvs](../images/dedicated.png)
 
 **Spot Instances**- A Spot Instance is an unused EC2 instance that is available for less than the On-Demand price. Your Spot Instance runs whenever capacity is available and the maximum price per hour for your request exceeds the Spot price. Any instance present with unused capacity will be allocated. Even though this is cost-effective, it does not fulfill the single-tenant hardware requirement of the client and hence is not the correct option.
 
@@ -161,7 +161,7 @@ Presence of 'Transform' section indicates it is a Serverless Application Model (
 
 **An Auto Scaling group can contain EC2 instances in only one Availability Zone of a Region** - This is not valid for Auto Scaling groups. An Auto Scaling group can contain EC2 instances in one or more Availability Zones within the same Region.
 
-![ASG](./images/ASG.jpg)
+![ASG](../images/ASG.jpg)
 
 **An Auto Scaling group can contain EC2 instances in one or more Availability Zones within the same Region** - This is a valid statement. Auto Scaling groups can span across the availability Zones of a Region.
 
@@ -188,7 +188,7 @@ Incorrect options:
 
 **Root user credentials** - Root user credentials are the Email ID and password used to create the AWS account. This user has full privileges on the account created and has access to all services under his account. The root user can create access keys or key pairs from his account. But, the root account credentials cannot directly be used to access EC2 instances or create digital signatures.
 
-![adsf](./images/td.jpg)
+![adsf](../images/td.jpg)
 
 **Create a CNAME record**
 
@@ -196,7 +196,7 @@ A CNAME record maps DNS queries for the name of the current record, such as acme
 
 CNAME records can be used to map one domain name to another. Although you should keep in mind that the DNS protocol does not allow you to create a CNAME record for the top node of a DNS namespace, also known as the zone apex. For example, if you register the DNS name example.com, the zone apex is example.com. You cannot create a CNAME record for example.com, but you can create CNAME records for www.example.com, newproduct.example.com, and so on.
 
-![asdf](./images/cnamevsalias.jpg)
+![asdf](../images/cnamevsalias.jpg)
 
 **Create an A record** - Used to point a domain or subdomain to an IP address. 'A record' cannot be used to map one domain name to another.
 
@@ -211,7 +211,7 @@ Which of the following does NOT help with debugging the issue?*
 
 By customizing sampling rules, you can control the amount of data that you record, and modify sampling behavior on the fly without modifying or redeploying your code. Sampling rules tell the X-Ray SDK how many requests to record for a set of criteria. X-Ray SDK applies a sampling algorithm to determine which requests get traced however because our application is failing to send data to X-Ray it does not help in determining the cause of failure.
 
-![x-ray](./images/x-ray-o.png)
+![x-ray](../images/x-ray-o.png)
 
 **EC2 X-Ray Daemon** - The AWS X-Ray daemon is a software application that listens for traffic on UDP port 2000, gathers raw segment data, and relays it to the AWS X-Ray API. The daemon logs could help with figuring out the problem.
 
@@ -223,11 +223,11 @@ By customizing sampling rules, you can control the amount of data that you recor
 
 Application Load Balancer can be used to securely authenticate users for accessing your applications. This enables you to offload the work of authenticating users to your load balancer so that your applications can focus on their business logic. You can use Cognito User Pools to authenticate users through well-known social IdPs, such as Amazon, Facebook, or Google, through the user pools supported by Amazon Cognito or through corporate identities, using SAML, LDAP, or Microsoft AD, through the user pools supported by Amazon Cognito. You configure user authentication by creating an authenticate action for one or more listener rules. The authenticate-cognito and authenticate-oidc action types are supported only with HTTPS listeners.
 
-![dsaf](./images/100.jpg)
+![dsaf](../images/100.jpg)
 
 Please make sure that you adhere to the following configurations while using CloudFront distribution in front of your Application Load Balancer:
 
-![dsaf](./images/101.jpg)
+![dsaf](../images/101.jpg)
 
 **Use Cognito Authentication via Cognito User Pools for your CloudFront distribution** - You cannot directly integrate Cognito User Pools with CloudFront distribution as you have to create a separate Lambda@Edge function to accomplish the authentication via Cognito User Pools. This involves additional development effort, so this option is not the best fit for the given use-case.
 
@@ -361,7 +361,7 @@ The nodes for a load balancer distribute requests from clients to registered tar
 
 10 - When cross-zone load balancing is enabled, each of the 10 targets receives 10% of the traffic. This is because each load balancer node can route its 50% of the client traffic to all 10 targets (present in both AZs).
 
-![dasd](./images/cross-lb.jpg)
+![dasd](../images/cross-lb.jpg)
 
 **IAM username and password** - IAM username and password credentials cannot be used to access CodeCommit.
 
@@ -388,7 +388,7 @@ Incorrect options:
 
 **Freeze the CodeBuild during its next execution** - You cannot freeze the CodeBuild process but you can stop it
 
-![sadfag](./images/beantalk-dp.jpg)
+![sadfag](../images/beantalk-dp.jpg)
 
 *An organization has offices across multiple locations and the technology team has configured an Application Load Balancer across targets in multiple Availability Zones. The team wants to analyze the incoming requests for latencies and the client's IP address patterns.*
 

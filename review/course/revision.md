@@ -1,5 +1,15 @@
 ## Section 3: IAM + EC2
 
+- **IAM**
+  - Global view
+  - MFA (Multi Factor Authentication) can be setup
+
+- **Security Group**
+  - how traffic is allowed into or out of our EC2 Machines.
+  - Can be attached to multiple instances
+  - All inbound traffic is **blocked** by default
+  - All outbound traffic is **authorised** by default
+
 - If your application is **not accessible (time out)**, then it's a **security group** issue.
 - If your application give a **"connection refused" error**, then it's an **application error** or it's not launched.
 - Overall, try to avoid using Elastic IP:
@@ -21,12 +31,15 @@
   - **Dedicated Hosts**: book an entire physical server, control everything.
 => Recommended for software that have complicated licensing model (BYOL - Bring your own license); companies that have strong regulatory & compliance needs.
 
-- Elastic Network Interface (ENI):
+- **Burstable Instances (T2/T3)**
+  - If all the credits are gone, the CPU becomes BAD
+
+- **Elastic Network Interface (ENI)**:
   - Logical component in a VPC that represent a virtual network card.
   - It have:
     - Primary private IPv4, one or more secondary IPv4
     - One Elastic IP per private IPv4
-    - One public IP + MAC address
+    - One public IP + **MAC address**
   - Create ENI and attach them on EC2 instances for failover.
 
 - Other notes:
@@ -58,8 +71,8 @@
 
 - **Classic Load Balancer**: HTTP, HTTPS, TCP
   - TCP (layer 4), HTTP (layer 7)
-  - Fixed hostname
-  - Can only have one SSL certificate.
+  - **Fixed hostname**
+  - Can only h**ave one SSL** certificate.
 
 - **Application Load Balancer**: HTTP, HTTPS, WebSocket
   - HTTP (layer 7)
@@ -92,7 +105,7 @@
   - Troubleshooting
     - 4xx: client induced errors.
     - 5xx: application induced errors.
-    - 503: at capacity or no registerd target.
+    - **503**: at capacity or no registerd target.
 
 \* *Load balancer **Stickiness**:*
 
@@ -104,10 +117,10 @@
 \* *Cross-zone Load Balancing*
 
 - each load balancer instance *distribute evenly accross all instances* in all AZ.
-- ALB: by default always on CZB, can't be disabled.
-- CLB & NLB: disabled by default.
+- **ALB**: **by default always on** CZB, can't be disabled.
+- **CLB & NLB**: disabled by default.
 
-\* *SSL - Server Name Indication (SNI)*
+\* ***SSL - Server Name Indication (SNI)***
 
 - SNI solves the problem of **loading multiple SSL certificates onto one web server** (to serve multiple websites)
 - requires the client to indicate the hostname of the target server then find & return correct SSL cert.
@@ -140,20 +153,26 @@
 - EBS Volumes come in 4 types
   - **GP2** (SSD): General purpose SSD volume that balances price and performance for a wide variety of workloads
     - Recommended for most workload
-    - System boot volumes
-    - Virtual desktops
-    - Low-latency
-    - Development & test env.
+    - *Max IOPS is 16,000…*
+    - **3 IOPS per GB**, means at 5,334GB we are at the max IOPS
   
   - **IO1** (SSD): Highest-performance SSD volume for mission-critical low-latency or high- throughput workloads
     - Critical business applications that require performance.
+    - *Max 64000 IOPS (Nitro) or 32000 (other)*
+    - The maximum ratio of provisioned IOPS to requested volume size (in GiB) is **50:1**
   - **ST1** (HDD): Low cost HDD volume designed for frequently accessed, throughput- intensive workloads
     - Streaming workloads requiring consistent, fast throughput at low price.
+    - Max IOPS is 500
   - **SC1** (HDD): Lowest cost HDD volume designed for less frequently accessed workloads
     - data that is infrequent access.
     - scenarios where the lowest storage cost is important.
+    - Max IOPS is 250
   - ***Only** GP2 and IO1 can be used as boot volumes*
 - ***Note***: EBS can only be attached to only one EC2 instance.
+
+- **EC2 Instance store**
+  - Physical disk attached to the physical server where your EC2
+  - On stop or termination, the instance store is loss
 
 ### 5.2 EFS Elastic File System
 
@@ -168,7 +187,7 @@
   - EFS can be mounted to many
   - Need to add permission on EC2 instances to access EFS.
 
-- Storage Tiers
+- Storage Tiers (2)
   - **Standard**: for frequently accessed files
   - **Infrequent access (EFS-IA)**: cost to retrieve files, lower price to store
   - The idea is: after N days, if not use then move to EFS-IA to save cost.
@@ -560,10 +579,11 @@ retrieve the IAM Policy.
 
 - Content Delivery Network (CDN)
 - Improves read performance, content is cached at the edge
+- Can expose external **HTTPS** and can talk to internal **HTTPS** backends
 - DDoS protection, integration with Shield, AWS Web Application Firewall
 - CloudFront Origins:
   - **S3 bucket**
-    - Origin Access Identity (OAI)
+    - Enhanced security with CloudFront Origin Access Identity (OAI)
     - OAI as IAM Role for CloudFront
     - S3 Bucket policy: allow OAI to access S3 objects.
   - **Custom origin (HTTP)**
@@ -571,9 +591,16 @@ retrieve the IAM Policy.
 
 | CloudFront                                                 | S3 Cross Region Replication                                              |
 |------------------------------------------------------------|--------------------------------------------------------------------------|
-| Global Edge network                                        | set up for desire region                                                 |
+| Global Edge network                                        | set up for desire regions                                                 |
 | File are cached for TTL                                    | File are updated in near real-time but read-only                         |
 | Great for **STATIC** content that must be available everywhere | Great for **DYNAMIC** content that available with low-latency in few regions |
+
+- CloudFront Caching
+  - The cache lives at each **CloudFront Edge** Location (0 -> 1 year)
+  - You can invalidate part of the cache using the **CreateInvalidation** API
+  - Maximize cache hits by separating static and dynamic distributions
+  - S3 bucket “websites” don’t support HTTPS
+
 
 ## 13. ECS Essentials
 

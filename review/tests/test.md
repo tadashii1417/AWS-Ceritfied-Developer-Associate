@@ -102,7 +102,7 @@ As the development team is looking for a serverless data store service, therefor
 
 An Application load balancer distributes incoming application traffic across multiple targets, such as EC2 instances, in multiple Availability Zones. A listener checks for connection requests from clients, using the protocol and port that you configure. The rules that you define for a listener determine how the load balancer routes requests to its registered targets. Each rule consists of a priority, one or more actions, and one or more conditions.
 
-![Listener on LB](./images/ALB-listener.png)
+![Listener on LB](../images/ALB-listener.png)
 
 To use an HTTPS listener, you must deploy at least one SSL/TLS server certificate on your load balancer. You can create an HTTPS listener, which uses encrypted connections (also known as SSL offload). This feature enables traffic encryption between your load balancer and the clients that initiate SSL or TLS sessions. As the EC2 instances are under heavy CPU load, the load balancer will use the server certificate to terminate the front-end connection and then decrypt requests from clients before sending them to the EC2 instances.
 
@@ -313,7 +313,7 @@ Application Load Balancer can be used to securely authenticate users for accessi
 
 ----------
 
-![Pool vs identity](./images/user-poolvsidentity.jpeg)
+![Pool vs identity](../images/user-poolvsidentity.jpeg)
 
 - User pool
   - authenticate user

@@ -6,23 +6,23 @@
 
 ------------------------------
 
-- [ ] IAM + EC2
-- [ ] ELB + ASG
-- [ ] EBS & EFS
+- [X] IAM + EC2
+- [X] ELB + ASG
+- [X] EBS & EFS
 - [X] RDS, Aurora, ElastiCache
 - [ ] Route 53
 - [ ] VPC Fundamental
 - [X] S3
 - [X] CLI, SDK, IAM Roles & Policies
 - [X] Advanced S3 & Athena
-- [ ] CloudFront
+- [X] CloudFront
 - [X] **ECS, ECR & Fargate**
 - [X] **Beanstalk**
 - [X] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
 - [X] **CloudFormation**
 - [X] **CloudWatch, X-Ray & CloudTrail**
 - [X] **SQS, SNS, Kinesis**
-- [ ] **Lambda**
+- [X] **Lambda**
 - [ ] DynamoDB
 - [X] **API Gateway**
 - [X] **SAM**

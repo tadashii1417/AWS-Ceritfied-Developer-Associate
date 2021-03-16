@@ -147,7 +147,7 @@ When you purchase a Reserved Instance for a specific Availability Zone, it's ref
 
 **Regional Reserved Instances** - When you purchase a Reserved Instance for a Region, it's referred to as a regional Reserved Instance. A regional Reserved Instance does not provide a capacity reservation.
 
-![dsdf](./images/reserved-instance.jpg)
+![dsdf](../images/reserved-instance.jpg)
 
 *Which of the following actions would make sure that only the last updated value of any item is used in the application?*
 

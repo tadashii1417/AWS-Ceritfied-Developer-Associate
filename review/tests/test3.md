@@ -59,7 +59,7 @@ Cognito user pools provide support for sign-up and sign-in services as well as s
 
 **Encryption by default is a Region-specific setting. If you enable it for a Region, you cannot disable it for individual volumes or snapshots in that Region** - You can configure your AWS account to enforce the encryption of the new EBS volumes and snapshot copies that you create. Encryption by default is a Region-specific setting. If you enable it for a Region, you cannot disable it for individual volumes or snapshots in that Region.
 
-![EBS encryption](./images/ebs-en.jpg)
+![EBS encryption](../images/ebs-en.jpg)
 **A volume restored from an encrypted snapshot, or a copy of an encrypted snapshot, is always encrypted**- By default, the CMK that you selected when creating a volume encrypts the snapshots that you make from the volume and the volumes that you restore from those encrypted snapshots. You cannot remove encryption from an encrypted volume or snapshot, which means that a volume restored from an encrypted snapshot, or a copy of an encrypted snapshot is always encrypted.
 *Incorrect options:*
 **You can encrypt an existing unencrypted volume or snapshot by using AWS Key Management Service (KMS) AWS SDKs** - This is an incorrect statement. There is no direct way to encrypt an existing unencrypted volume or snapshot. You can encrypt an unencrypted snapshot by copying and enabling encryption while copying the snapshot. To encrypt an EBS volume, you need to create a snapshot and then encrypt the snapshot as described earlier. From this new encrypted snapshot, you can then create an encrypted volume.
@@ -126,7 +126,7 @@ Incorrect options:
 **Create an LSI**
 LSI stands for Local Secondary Index. Some applications only need to query data using the base table's primary key; however, there may be situations where an alternate sort key would be helpful. To give your application a choice of sort keys, you can create one or more local secondary indexes on a table and issue Query or Scan requests against these indexes.
 
-![asdfsd](./images/idnex.jpg)
+![asdfsd](../images/idnex.jpg)
 
 Local Secondary Indexes still rely on the original Hash Key. When you supply a table with hash+range, think about the LSI as hash+range1, hash+range2.. hash+range6. You get 5 more range attributes to query on. Also, there is only one provisioned throughput.
 Global Secondary Indexes defines a new paradigm - different hash/range keys per index.
