@@ -162,7 +162,7 @@
 - Highly available, *pay per use.*
 - Encryption at rest using KMS
 
-![EFS](images/efs.png)
+![EFS](../images/efs.png)
 - Note:
   - EBS only mounted into a single EC2
   - EFS can be mounted to many
@@ -354,7 +354,7 @@ def save_user(id, values):
 - **Internet Gateway**: helps our VPC instances connect with the internet
 - **NAT Gateways** (AWS-managed) & **NAT Instances** (self-managed): allow **Private subnets** to access the internet.
 
-![main terms](images/vpc.png)
+![main terms](../images/vpc.png)
 
 - **NACL** (Network ACL)
   - A firewall which controls traffic from and to subnet
@@ -373,7 +373,7 @@ def save_user(id, values):
 | at *subnet* level          | at *instance* level     |
 | Support ALLOW & DENY rules | Support ALLOW rule only |
 
-![NACL, SG](images/nacl&sg.png)
+![NACL, SG](../images/nacl&sg.png)
 
 - **VPC Peering**
   - Connect two VPCs privately
@@ -386,7 +386,7 @@ def save_user(id, values):
   - VPC Endpoint Interface (**ENI**): the rest
   - Only used within your VPC
 
-![VPC Endpoint](images/vpc-endpoint.png)
+![VPC Endpoint](../images/vpc-endpoint.png)
 
 - **Connect On-premise Data Center to VPC**
 
@@ -401,19 +401,27 @@ def save_user(id, values):
     - Site-to-site VPN & Direct Connect **CAN'T** access VPC endpoint.
 
 
-![VPC Connect](images/vpc-connect.png)
+![VPC Connect](../images/vpc-connect.png)
 
 ## 9. Amazon S3
 
 - S3: Global service
 - Buckets must have a **global unique name**
-- Buckets are defined at the region level
+- *Buckets are defined at the region level*
+- Encryption in flight is also called SSL / TLS 
+- **Versioning**
+  - It is enabled at the **bucket level**
+  - Any file that is not versioned prior to enabling versioning will have version “null”
+
+
 - **S3 Security:**: 4 methods of encrypting objects in S3
   - **SSE-S3**: encrypts S3 objects using keys handled & managed by AWS
     - Use key managed by S3
+    - Must set header: **“x-amz-server-side-encryption": "AES256"**
   - **SSE-KMS**: leverage AWS Key Management Service to manage encryption keys
     - Use key managed by KMS
     - Pro: User control + audit trail
+    - **“x-amz-server-side-encryption": ”aws:kms"**
   - **SSE-C**: when you want to manage your own encryption keys
     - Use key from user
     - S3 does not store the encryption key
@@ -423,10 +431,10 @@ def save_user(id, values):
     - User encrypt before and then decrypt when received.
 
 - **S3 Security 2:**
-  - User based: using IAM Policies
+  - User based: using **IAM Policies**
   - Resource based
     - **Bucket Policies**: bucket wide rules from s3 account
-    - Object Access Control List (ACL)
+    - Object Access Control List **(ACL)**
     - Bucket Access Control List (ACL)
   - ***Note: an IAM principal can access an S3 object if***
     - the user IAM permissions allow it **OR** the resource policy ALLOWS it
@@ -453,6 +461,35 @@ def save_user(id, values):
 
 - To use the CLI, first setup credential in IAM service
 - The RIGHT way to use CLI is through IAM role that attached to EC2 instance.
+- When you run API calls and they fail, you can get a long error message, this error message can be decoded using the STS command line: `sts decode-authorization-message`
+
+- **AWS EC2 Instance Metadata**
+  - It allows AWS EC2 instances to `learn about themselves` without using an IAM Role for that purpose. The URL is `http://169.254.169.254/latest/meta-data`
+  - You *can retrieve the IAM Role name* from the metadata, but you **CANNOT**
+retrieve the IAM Policy. 
+
+- **MFA with CLI**
+  - To use MFA with the CLI, you must create a temporary session
+  - To do so, you must run the STS GetSessionToken API call
+- **S3 MFA Delete**
+  - MFA forces user to generate a code on a device before doing important operations on S3
+  - To use MFA-Delete, **enable Versioning** on the S3 bucket
+  - You will need MFA to:
+    - *permanently delete an object version*
+    - suspend versioning on the bucket
+  - You won’t need MFA for
+    - enabling versioning
+    - listing deleted versions
+  - **Only the bucket owner (root account) can enable/disable MFA-Delete**
+  - MFA-Delete currently can **only be enabled using the CLI**
+
+- ***For DELETE operations*:**
+  - If you delete *without* a version ID, it adds a delete marker, not replicated
+  - If you delete *with* a version ID, it deletes in the source, not replicated
+
+- **S3 Pre-Signed URLs**
+  - *Can generate pre-signed URLs using SDK or CLI*
+  - Valid for a default of 3600 seconds, can change timeout with `--expires-in`
 
 ### 10.2 AWS SDK
 
@@ -483,8 +520,12 @@ def save_user(id, values):
 | Infrequent Access (IA) | - less frequently accessed<br>but required RAPID access when needed.<br>- Sustain 2 concurrent facility failures<br>- Store in multiple AZ                                                                                                                                           | 99.9%       | Disaster recovery, backups                                  |
 | S3 One Zone            | - Same as IA, but in single AZ<br>- Data lost when AZ destroy                                                                                                                                                                                                                        | 99.5%       | Secondary backup<br>Data that can be recreated ex.thumbnail |
 | S3 Intelligent Tiering | - Automatically moves objects between 2<br>tiers (General & IA)<br>- Resilient to disaster.                                                                                                                                                                                          | 99.9%       |                                                             |
-| Glacier                | - Low cost for achieving & backup<br>- Data is retained in longer term<br>- Each item: Achieve<br>- Achieves are store in Vaults<br>- 3 retrieval options:<br>   + Expedited (1-5 minutes)<br>   + Standard (3-5 hours)<br>   + Bulk (5-12h)<br>- Minimum storage duration: 90 days. | 99.99%      | achieving & backup<br>have option to retrieve faster.       |
-| Glacier Deep Archive   | - 2 retrieval options:<br>   + Standard (12h)<br>   + Bulk (48h)<br>- Minimum storage duration: 180 days.                                                                                                                                                                            | 99.99%      | supper long term                                            |
+| Glacier                | - Low cost for achieving & backup<br>- Data is retained in longer term<br>- Each item: Achieve<br>- Achieves are store in Vaults<br>- 3 retrieval options:<br>   + **Expedited (1-5 minutes)**<br>   + Standard (3-5 hours)<br>   + Bulk (5-12h)<br>- Minimum storage duration: 90 days. | 99.99%      | achieving & backup<br>have option to retrieve faster.       |
+| Glacier Deep Archive   | - 2 retrieval options:<br>   + **Standard (12h)**<br>   + Bulk (48h)<br>- Minimum storage duration: 180 days.                                                                                                                                                                            | 99.99%      | supper long term                                            |
+
+- Moving between storage classes
+  - You can transition objects between storage classes 
+  - Moving objects can be automated using a **lifecycle configuration**
 
 - KMS limitation
   - if you use SSE-KMS, S3 may be impacted by KMS limit.
@@ -493,21 +534,27 @@ def save_user(id, values):
 
 - S3 Performance:
   - **Multi-part upload**
-    - use for big file with parallelize upload, a must for 5GB.
+    - use for big file with parallelize upload, recommended for files > 100MB, a must for 5GB.
   - **S3 Tranfer Acceleration**
-    - Increase transfer speed by transfering file to AWS edge location
+    - Increase transfer speed by **transfering file to AWS edge location**
     - Compatible with multi-part upload.
-    - It is fast because we minimized the amount of public internet that we go through and maximized private network
+    - It is fast because we minimized the amount of public internet that we go through and **maximized private network**
 
-- S3 Select & Glacier Select
+- **S3 Select & Glacier Select**
   - Retrieve less data by filter on server
   - Can filter by simple SQL state
 
-- S3 Event Notification
+- **S3 Event Notification**
   - 3 possible targets: SQS, SNS, Lambda
 
+- **S3 Object Lock**
+  - Adopt a WORM (Write Once Read Many) model
+  - Block an object version deletion for a specified amount of time
+  - Glacier Vault Lock (~)
+
 - **Athena**
-  - perform analytics directly on S3 files.
+  - **Serverless** service to **perform analytics** directly against S3 files
+  - *Exam Tip*: Analyze data directly on S3 => use Athena
 
 ## 12. CloudFront
 
@@ -561,7 +608,7 @@ def save_user(id, values):
   - No need to configure host port this time -> random (~host port = 0). ***If we specify it, only one container can be run in EC2 instance***
   - But container port is needed => ALB will handle this with dynamic port mapping.
 
-![ALB with ECS service](images/alb&ecs.png)
+![ALB with ECS service](../images/alb&ecs.png)
 
 - **ECR**
   - private docker image repository
@@ -637,7 +684,7 @@ def save_user(id, values):
 | **Immutable**                           | Running at capacity<br>Zero downtime | Longest         | High cost<br>double capacity | - deployed to a temporary ASG<br>- quick rollback if fail<br>- great for prod |
 
 From AWS:
-![AWS deployment methods](./images/beanstalk-dm.png)
+![AWS deployment methods](./../images/beanstalk-dm.png)
 
 \* *Elastic Beanstalk Deployment: Blue / Green* (~Immutable)
 
@@ -745,7 +792,7 @@ From AWS:
 - **CodeBuild**: building and testing our code
 - **CodeDeploy**: deploying the code to EC2 fleets (not Beanstalk)
 
-![Tech Stack for CICD](./images/tech-stack-cicd.png)
+![Tech Stack for CICD](./../images/tech-stack-cicd.png)
 
 - **CodeCommit**:
   - **Authentication in Git**:
@@ -783,7 +830,7 @@ From AWS:
   - `buildspec.yml` file must be at the root of your code
   - **CodeBuild run on docker**
   - *You can run CodeBuild locally on your deskto*p (after installing Docker)
-![How CodeBuild work](./images/codebuild-work.png)
+![How CodeBuild work](./../images/codebuild-work.png)
 
 - **CodeDeploy**
   - *Each EC2 Machine (or On Premise machine) must be running the CodeDeploy Agent*
@@ -793,7 +840,7 @@ From AWS:
   - CodeDeploy Agent will report of success / failure of deployment on the instance
   - EC2 instances are grouped by **deployment group** (dev / test / prod)
   - **Blue / Green only works with EC2 instances (not on premise)**
-![How CodeDeploy work](./images/codedeploy-work.png)
+![How CodeDeploy work](./../images/codedeploy-work.png)
 
 - **AWS CodeDeploy AppSpec**
   - *how to source and copy from S3 / GitHub to filesystem*
@@ -902,7 +949,7 @@ From AWS:
 
 - Filters do not retroactively filter data. Filters only publish the metric data points for events that happen after the filter was created.
 
-![Metric filter cloudwatch log](./images/metric-filter.png)
+![Metric filter cloudwatch log](./../images/metric-filter.png)
 
 \* *Amazon EventBridge*
 
@@ -926,7 +973,7 @@ From AWS:
 - **Enable on**:
   - **Lambda** make sure function import x-ray
   - **Beanstalk** config in file `.ebextensions/xray-daemon.config`
-![How to enable X-Ray](./images/x-ray.png)
+![How to enable X-Ray](./../images/x-ray.png)
 
 - X-Ray Concepts:
   - Segments: each application / service will send them
@@ -1035,7 +1082,7 @@ From AWS:
   - *Make sure your SQS queue access policy allows for SNS to write*
   - **SNS cannot send messages to SQS FIFO queues** (AWS limitation)
 
-![SNS+SQS: Fan out](./images/fan_out.png)
+![SNS+SQS: Fan out](./../images/fan_out.png)
 
 ### 17.3 Kinesis 
 
@@ -1134,7 +1181,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - Stay in the middle of CloudFront & App (DB)
     - Transformation
     - User authentication, authorization, ...
-![Using lambda@edge as global application](./images/lambda_edge.png)
+![Using lambda@edge as global application](./../images/lambda_edge.png)
 
 - *Lambda – Asynchronous Invocations*
   - Lambda attempts to retry on error: `3 tries total`, 1 minute wait after 1st , then 2 minutes wait
@@ -1180,11 +1227,11 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - Lambda will create an **ENI** (Elastic Network Interface) in your subnets 
 - AWSLambdaVPCAccessExecutionRole
 
-![Lambda in VPC](./images/lambda-vpc.png)
+![Lambda in VPC](./../images/lambda-vpc.png)
 
 \* **Lambda in VPC - Internet Access**
 
-![Lambda in VPC - Internet access](./images/lambda-internet.png)
+![Lambda in VPC - Internet access](./../images/lambda-internet.png)
 
 - Deploying a Lambda function in a public subnet does not give it internet access or a public IP (except EC2 instance)
 - **2 ways for lambda to access internet/resources**
@@ -1404,7 +1451,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - ***HTTP / AWS (Lambda & AWS Services)***
   - you must configure both the integration request and integration response 
   - Setup data mapping using `mapping templates` for the request & response
-![Integration type - aws/http](./images/api-http/aws.png)
+![Integration type - aws/http](./../images/api-http/aws.png)
 - **AWS_PROXY (Lambda Proxy)**
   - No mapping template, headers, query string parameters… are passed as arguments
 - **HTTP_PROXY**
@@ -1418,7 +1465,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - JSON to XML with SOAP:
   - SOAP API are XML based, whereas REST API are JSON based
 
-![Mapping template](./images/mapping-temp.png)
+![Mapping template](./../images/mapping-temp.png)
 
 \* *Caching API responses*
 
@@ -1457,14 +1504,14 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **Cognito User Pools**:
   - ***Authentication = Cognito User Pools | Authorization = API Gateway Methods***
 
-![API gateway security with cognito](./iamges/../images/api-cognito.png)  
+![API gateway security with cognito](./iamges/../../images/api-cognito.png)  
 
 - **Lambda Authorizer (formerly Custom Authorizers)**
   - Token-based authorizer (bearer token)
   - Lambda must return an IAM policy for the user, result policy is cached
   - ***Authentication = External | Authorization = Lambda function***
 
-![sercurity with lambda](./image/../images/lamda-authorizer.png)
+![sercurity with lambda](./image/../../images/lamda-authorizer.png)
 
 - **Summary**
 
@@ -1515,7 +1562,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **SAM and CodeDeploy**
   - SAM framework natively uses CodeDeploy to update Lambda functions
 
-![SAM & CodeDeploy](./images/sam.png)
+![SAM & CodeDeploy](./../images/sam.png)
 
 ## 22. Cognito
 
@@ -1531,7 +1578,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
   - Cognito vs IAM: `hundreds of users`, `mobile users`, `authenticate with SAML`
 
 \* *Cognito User Pools*
-![CUP](./images/CUP.png)
+![CUP](./../images/CUP.png)
 
 - Create a serverless database of user for your web & mobile apps
 - Login sends back a JSON Web Token (JWT)
@@ -1627,7 +1674,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 
 \* *AWS Directory Service*
 
-![Directory service](./images/directory-service.png)
+![Directory service](./../images/directory-service.png)
 
 
 ## 24. Sercurity
@@ -1638,7 +1685,7 @@ Let’s assume 100 trucks, 5 kinesis shards, 1 SQS FIFO
 - **Envelope Encryption**:
   - anything over 4 KB of data that needs to be encrypted must use the **Envelope Encryption** == **GenerateDataKey API**
 
-![Generate Envelope Encryption](./images/envelope.png)
+![Generate Envelope Encryption](./../images/envelope.png)
 
 - To decrypt:
   - Send envelope (encrypted DEK, file) to KMS to receive plaintext data key

@@ -1,0 +1,32 @@
+- [ ] Domain 1: Deployment 22%
+- [ ] Domain 2: Security 26%
+- [ ] Domain 3: Development with AWS Services 30%
+- [ ] Domain 4: Refactoring 10%
+- [ ] Domain 5: Monitoring and Troubleshooting 12%
+
+------------------------------
+
+- [ ] IAM + EC2
+- [ ] ELB + ASG
+- [ ] EBS & EFS
+- [X] RDS, Aurora, ElastiCache
+- [ ] Route 53
+- [ ] VPC Fundamental
+- [X] S3
+- [X] CLI, SDK, IAM Roles & Policies
+- [X] Advanced S3 & Athena
+- [ ] CloudFront
+- [X] **ECS, ECR & Fargate**
+- [X] **Beanstalk**
+- [X] **CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy**
+- [X] **CloudFormation**
+- [X] **CloudWatch, X-Ray & CloudTrail**
+- [X] **SQS, SNS, Kinesis**
+- [ ] **Lambda**
+- [ ] DynamoDB
+- [X] **API Gateway**
+- [X] **SAM**
+- [ ] Cognito
+- [ ] Others: Step Function, AppSync
+- [X] **Advanced Identity**
+- [X] **AWS Security**
