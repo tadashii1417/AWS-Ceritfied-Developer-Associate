@@ -934,10 +934,10 @@ From AWS:
 ## 17. AWS Monitoring, Troubleshooting & Audit
 
 - AWS **CloudWatch**:
-  - *Metrics*: Collect and track key metrics
+  - ***Metrics***: Collect and track key metrics
     - With `detailed monitoring`, you get data `every 1 minute` (default is `5 minutes`)
-  - *Logs*: Collect, monitor, analyze and store log files, **They never expire by default**
-  - *Events*: Send notifications when certain events happen in your AWS
+  - ***Logs***: Collect, monitor, analyze and store log files, **They never expire by default**
+  - ***Events***: Send notifications when certain events happen in your AWS
   - ***Alarms***: React in real-time to metrics / events
 - AWS **X-Ray**:
   - Troubleshooting *application performance and errors*
