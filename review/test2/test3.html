@@ -1,0 +1,410 @@
+<!DOCTYPE html><html><head>
+      <title>test3</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////home/truong/.vscode/extensions/shd101wyy.markdown-preview-enhanced-0.5.16/node_modules/@shd101wyy/mume/dependencies/katex/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <p><em>A highly secured AWS environment has strict policies for granting access to Developers. A Developer requires the ability to use the API to call ec2:StartInstances and ec2:StopInstances. Which element of an IAM policy statement should be used to specify which APIs can be called?</em><br>
+The Action element describes the specific action or actions that will be allowed or denied. Statements must include either an Action or NotAction element. Each AWS service has its own set of actions that describe tasks that you can perform with that service.<br>
+For this scenario, the Action element might include the following JSON&#x201D;<br>
+&quot;Action&quot;: [ &quot;ec2:StartInstances&quot;, &quot;ec2:StopInstances&quot; ]<br>
+CORRECT: &quot;Action&quot; is the correct answer.<br>
+INCORRECT: &quot;Effect&quot; is incorrect. The Effect element is required and specifies whether the statement results in an allow or an explicit deny.<br>
+INCORRECT: &quot;Resource&quot; is incorrect. The Resource element specifies the object or objects that the statement covers.<br>
+INCORRECT: &quot;Condition&quot; is incorrect. The Condition element (or Condition block) lets you specify conditions for when a policy is in effect.</p>
+<p><em>An Amazon RDS database that stores product information for an online eCommerce marketplace is experiencing heavy demand. An increase in read requests is causing the database performance to be impacted and is affecting database writes.<br>
+What is the best way to offload the read traffic from the database with MINIMAL code changes and cost?</em><br>
+Amazon RDS read replicas are used for offloading reads from the primary database instance. Read replicas provide a read-only copy of the database. In this scenario this represents the simplest way of achieving the required outcome. The application will need to be modified to point to the read replica for all read requests. This requires some code changes, but they are minimal.<br>
+CORRECT: &quot;Create an RDS Read Replica and modify the application to send read requests to the replica&quot; is the correct answer.<br>
+INCORRECT: &quot;Change the RDS database instance type to an instance with more CPU/RAM&quot; is incorrect as this is not a way of &#x201C;offloading the read traffic from the database&#x201D;. This is an example of scaling vertically, rather than scaling horizontally.<br>
+INCORRECT: &quot;Create an RDS Multi AZ DB and modify the application to send read requests to the standby DB&quot; is incorrect as we are trying to simply offload read traffic which is a use case for a read replica. However, it is possible for some database engines (MySQL and MariaDB) to combine multi-AZ and read replicas.<br>
+INCORRECT: &quot;Create an ElastiCache Memcached cluster and modify the application to send read requests to the cluster&quot; is incorrect as this would require more code changes and higher cost. For this use case an RDS read replica will be simpler and cheaper.</p>
+<p><em>A Development team has deployed several applications running on an Auto Scaling fleet of Amazon EC2 instances. The Operations team have asked for a display that shows a key performance metric for each application on a single screen for monitoring purposes.<br>
+What steps should a Developer take to deliver this capability using Amazon CloudWatch?</em></p>
+<p>A <strong>namespace</strong> is a container for CloudWatch metrics. Metrics in different namespaces are isolated from each other, so that metrics from different applications are not mistakenly aggregated into the same statistics.<br>
+Therefore, the Developer should create a custom namespace with a unique metric name for each application. This namespace will then allow the metrics for each individual application to be shown in a single view through CloudWatch.<br>
+CORRECT: &quot;Create a custom namespace with a unique metric name for each application&quot; is the correct answer.<br>
+INCORRECT: &quot;Create a custom alarm with a unique metric name for each application&quot; is incorrect as alarms are used to trigger actions when a threshold is reached, this is not relevant to organizing metrics for display.</p>
+<p><em>A company needs to provide additional security for their APIs deployed on Amazon API Gateway. They would like to be able to authenticate their customers with a token. What is the SAFEST way to do this?</em><br>
+A Lambda authorizer (formerly known as a custom authorizer) is an API Gateway feature that uses a Lambda function to control access to your API.<br>
+A Lambda authorizer is useful if you want to implement a custom authorization scheme that uses a bearer token authentication strategy such as OAuth or SAML, or that uses request parameters to determine the caller&apos;s identity.<br>
+INCORRECT: &quot;Setup usage plans and distribute API keys to the customers&quot; is incorrect as this is not the most secure (safest) option. AWS recommend that you don&apos;t rely on API keys as your only means of authentication and authorization for your APIs.</p>
+<p><em>A development team is migrating data from various file shares to AWS from on-premises. The data will be migrated into a single Amazon S3 bucket. What is the SIMPLEST method to ensure the data is encrypted at rest in the S3 bucket?</em><br>
+CORRECT: &quot;Enable default encryption when creating the bucket&quot; is the correct answer.<br>
+INCORRECT: &quot;Use SSL to transmit the data over the Internet&quot; is incorrect as this only deals with encrypting the data whilst it is being transmitted, it does not provide encryption at rest.<br>
+INCORRECT: &quot;Ensure all requests use the x-amz-server-side&#x200B;-encryption&#x200B;-customer-key header&quot; is incorrect as it is unnecessary to use customer-provided keys. This is used with client-side encryption which is more complex to manage and is not required in this scenario.<br>
+INCORRECT: &quot;Ensure all requests use the x-amz-server-side-encryption header&quot; is incorrect as though this has the required effect of ensuring all data is encrypted, it is not the simplest method. In this scenario there is a team migrating data from different file shares which increases the risk of human error where a team member may neglect to add the header to the API call. Using default encryption on the bucket is a simpler solution.</p>
+<p><em>A developer is creating an Auto Scaling group of Amazon EC2 instances. The developer needs to publish a custom metric to Amazon CloudWatch. Which method would be the MOST secure way to authenticate a CloudWatch PUT request?</em><br>
+The most secure configuration to authenticate the request is to create an IAM role with a permissions policy that only provides the minimum permissions requires (least privilege). This IAM role should have a customer-managed permissions policy applied with the PutMetricData allowed.<br>
+The PutMetricData API publishes metric data points to Amazon CloudWatch. CloudWatch associates the data points with the specified metric. If the specified metric does not exist, CloudWatch creates the metric. When CloudWatch creates a metric, it can take up to fifteen minutes for the metric to appear in calls to ListMetrics.<br>
+CORRECT: &quot;Create an IAM role with the PutMetricData permission and create a new Auto Scaling launch configuration to launch instances using that role&quot; is the correct answer<br>
+INCORRECT: &quot;Modify the CloudWatch metric policies to allow the PutMetricData permission to instances from the Auto Scaling group&quot; is incorrect as this is not possible. You should instead grant the permissions through a permissions policy and attach that to a role that the EC2 instances can assume.<br>
+INCORRECT: &quot;Create an IAM user with the PutMetricData permission and modify the Auto Scaling launch configuration to inject the user credentials into the instance user data&quot; is incorrect. You cannot &#x201C;inject user credentials&#x201D; using a launch configuration. Instead, you can attach an IAM role which allows the instance to assume the role and take on the privileges allowed through any permissions policies that are associated with that role.<br>
+INCORRECT: &quot;Create an IAM role with the PutMetricData permission and modify the Amazon EC2 instances to use that role&quot; is incorrect as you should create a new launch configuration for the Auto Scaling group rather than updating the instances manually.</p>
+<p><em>A developer is building a web application that will be hosted on Amazon EC2 instances. The EC2 instances will store configuration data in an Amazon S3 bucket. What is the SAFEST way to allow the EC2 instances to access the S3 bucket?</em><br>
+CORRECT: &quot;Create an IAM Role with a customer-managed policy attached that has the necessary permissions and attach the role to the EC2 instances&quot; is the correct answer.<br>
+INCORRECT: &quot;Store an access key and secret ID that has the necessary permissions on the EC2 instances&quot; is incorrect as storing access keys on the EC2 instances is insecure and cumbersome to manage.<br>
+INCORRECT: &quot;Create an IAM Role with an AWS managed policy attached that has the necessary permissions and attach the role to the EC2 instances&quot; is incorrect as the AWS managed policy would provide more privileges than required.</p>
+<p><em>A customer-facing web application runs on Amazon EC2 with an Application Load Balancer and an Amazon RDS database back end. Recently, the security team noticed some SQL injection attacks and cross-site scripting attacks targeting the web application.</em><br>
+AWS WAF is a web application firewall that helps protect your web applications or APIs against common web exploits that may affect availability, compromise security, or consume excessive resources.<br>
+AWS WAF gives you control over how traffic reaches your applications by enabling you to create security rules that block common attack patterns, such as SQL injection or cross-site scripting, and rules that filter out specific traffic patterns you define.<br>
+CORRECT: &quot;AWS WAF&quot; is the correct answer.<br>
+INCORRECT: &quot;AWS KMS&quot; is incorrect as this service is used for creating and managing encryption keys.<br>
+INCORRECT: &quot;Security Groups&quot; is incorrect as they are an instance-level firewall. They do not have the ability to prevent SQL injection or cross-site scripting attacks.<br>
+INCORRECT: &quot;Network ACLs&quot; is incorrect as this is a subnet-level firewall. It doesn&#x2019;t not have the ability to prevent SQL injection or cross-site scripting attacks.</p>
+<p><em>A Developer needs to create an instance profile for an Amazon EC2 instance using the AWS CLI. How can this be achieved? (Select THREE.)</em></p>
+<pre data-role="codeBlock" data-info class="language-"><code>aws iam create-instance-profile --instance-profile-name EXAMPLEPROFILENAME
+aws iam add-role-to-instance-profile --instance-profile-name EXAMPLEPROFILENAME --role-name EXAMPLEROLENAME
+aws ec2 associate-iam-instance-profile --iam-instance-profile Name=EXAMPLEPROFILENAME 
+--instance-id i-012345678910abcde
+</code></pre><p><em>An application is being deployed at a media company. The application will receive data from applications at many new outlets around the country. The application will ingest the data, process it with AWS Lambda and then store the data in an Amazon S3 bucket.</em><br>
+Amazon Kinesis Data Firehose is the easiest way to reliably load streaming data into data lakes, data stores and analytics tools. It can capture, transform, and load streaming data into Amazon S3, Amazon Redshift, Amazon Elasticsearch Service, and Splunk, enabling near real-time analytics with existing business intelligence tools and dashboards you&#x2019;re already using today.<br>
+You can configure Amazon Kinesis Data Firehose to prepare your streaming data before it is loaded to data stores. Simply select an AWS Lambda function from the Amazon Kinesis Data Firehose delivery stream configuration tab in the AWS Management console. Amazon Kinesis Data Firehose will automatically apply that function to every input data record and load the transformed data to destinations.<br>
+Therefore, the best solution for these requirements is to use Amazon Kinesis Firehose with AWS Lambda for the transformation/processing of data. Kinesis Firehose can then load the data to Amazon S3.</p>
+<p>CORRECT: &quot;Amazon Kinesis Firehose&quot; is the correct answer.<br>
+INCORRECT: &quot;Amazon CloudFront&quot; is incorrect. CloudFront is a good solution for getting content closer to users for performance. However, in this use case we need a solution for ingesting streaming data and then loading it into a datastore with processing of the data happening as well. This is a good use case for Kinesis Firehose.<br>
+INCORRECT: &quot;Amazon SQS&quot; is incorrect as Amazon SQS is a message bus that is used for decoupling application components. Though you could have the applications place the data in an SQS queue and then have a consumer layer picking up those records and passing them to Lambda, there are conditions with SQS queues for message size that could complicate this solution. Also, Kinesis Firehose is ideal and designed specifically for this type of use case, so the better solution is to use Firehose instead.<br>
+INCORRECT: &quot;Amazon SNS&quot; is incorrect as the SNS service is involved with sending notifications not ingesting, processing and then loading data into a data store.</p>
+<p><em>A company is creating an application that will require users to access AWS services and allow them to reset their own passwords. Which of the following would allow the company to manage users and authorization while allowing users to reset their own passwords?</em></p>
+<p>There are two key requirements in this scenario. Firstly the company wants to manage user accounts using a system that allows users to reset their own passwords. The company also wants to authorize users to access AWS services.<br>
+The first requirement is provided by an Amazon Cognito User Pool. With a Cognito user pool you can add sign-up and sign-in to mobile and web apps and it also offers a user directory so user accounts can be created directly within the user pool. Users also have the ability to reset their passwords.<br>
+To access AWS services you need a Cognito Identity Pool. An identity pool can be used with a user pool and enables a user to obtain temporary limited-privilege credentials to access AWS services.</p>
+<p><img src="../images/11111.png" alt="sdfs"></p>
+<p>Therefore, the best answer is to use Amazon Cognito user pools and identity pools.<br>
+CORRECT: &quot;Amazon Cognito user pools and identity pools&quot; is the correct answer.<br>
+INCORRECT: &quot;Amazon Cognito identity pools and AWS STS&quot; is incorrect as there is no user directory in this solution. A Cognito user pool is required.<br>
+INCORRECT: &quot;Amazon Cognito identity pools and AWS IAM&quot; is incorrect as a Cognito user pool should be used as the directory source for creating and managing users. IAM is used for accounts that are used to administer AWS services, not for application user access.</p>
+<p><em>A Developer is creating a DynamoDB table for storing application logs. The table has 5 write capacity units (WCUs). The Developer needs to configure the read capacity units (RCUs) for the table. Which of the following configurations represents the most efficient use of throughput?</em><br>
+In this scenario the Developer needs to maximize efficiency of RCUs. Therefore, the Developer will need to consider the item size and consistency model to determine the most efficient usage of RCUs.<br>
+Item size/consistency model: we know that both 1 KB items and 4 KB items consume the same number of RCUs as a read capacity unit represents one strongly consistent read per second, or two eventually consistent reads per second, for an item up to 4 KB in size.<br>
+The following bullets provide the read throughput for each configuration:<br>
+&#x2022; Eventually consistent, 15 RCUs, 1 KB item = 30 items/s = 2 items per RCU<br>
+&#x2022; Strongly consistent, 15 RCUs, 1 KB item = 15 items/s = 1 item per RCU<br>
+&#x2022; Eventually consistent, 5 RCUs, 4 KB item = 10 items/s = 2 items per RCU<br>
+&#x2022; Strongly consistent, 5 RCUs, 4 KB item = 5 items/s = 1 item per RCU</p>
+<p>From the above we can see that 4 KB items with eventually consistent reads is the most efficient option. Therefore, the Developer should choose the option &#x201C;Eventually consistent reads of 5 RCUs reading items that are 4 KB in size&#x201D;. This will achieve 2x 4 KB items per RCU.</p>
+<p><em>A Developer needs to choose the best data store for a new application. The application requires a data store that supports key/value pairs and optimistic locking. Which of the following would provide the MOST suitable solution?</em><br>
+Amazon DynamoDB is a key-value and document database that delivers single-digit millisecond performance at any scale. Optimistic locking is a strategy to ensure that the client-side item that you are updating (or deleting) is the same as the item in Amazon DynamoDB. If you use this strategy, your database writes are protected from being overwritten by the writes of others, and vice versa.<br>
+With optimistic locking, each item has an attribute that acts as a version number. If you retrieve an item from a table, the application records the version number of that item. You can update the item, but only if the version number on the server side has not changed. If there is a version mismatch, it means that someone else has modified the item before you did.<br>
+INCORRECT: &quot;Amazon RDS&quot; is incorrect as RDS is not a key/value database, nor does it support optimistic locking.<br>
+INCORRECT: &quot;Amazon RedShift&quot; is incorrect as RedShift is not a key/value database, nor does it support optimistic locking.<br>
+INCORRECT: &quot;Amazon S3&quot; is incorrect as though it does store objects as key/value pairs it does not support optimistic locking.</p>
+<p><em>An application has been instrumented to use the AWS X-Ray SDK to collect data about the requests the application serves. The Developer has set the user field on segments to a string that identifies the user who sent the request.<br>
+How can the Developer search for segments associated with specific users?</em><br>
+A segment document conveys information about a segment to X-Ray. A segment document can be up to 64 kB and contain a whole segment with subsegments, a fragment of a segment that indicates that a request is in progress, or a single subsegment that is sent separately. You can send segment documents directly to X-Ray by using the PutTraceSegments API.<br>
+Example minimally complete segment:</p>
+<pre data-role="codeBlock" data-info class="language-"><code>{
+&quot;name&quot; : &quot;example.com&quot;,
+&quot;id&quot; : &quot;70de5b6f19ff9a0a&quot;,
+&quot;start_time&quot; : 1.478293361271E9,
+&quot;trace_id&quot; : &quot;1-581cf771-a006649127e371903a2de979&quot;,
+&quot;end_time&quot; : 1.478293361449E9
+}
+</code></pre><p>A subset of segment fields are indexed by X-Ray for use with filter expressions. For example, if you set the user field on a segment to a unique identifier, you can search for segments associated with specific users in the X-Ray console or by using the GetTraceSummaries API.<br>
+CORRECT: &quot;By using the GetTraceSummaries API with a filter expression&quot; is the correct answer.<br>
+INCORRECT: &quot;By using the GetTraceGraph API with a filter expression&quot; is incorrect as this API action retrieves a service graph for one or more specific trace IDs.<br>
+INCORRECT: &quot;Use a filter expression to search for the user field in the segment metadata&quot; is incorrect as the user field is not part of the segment metadata and metadata is not is not indexed for search.<br>
+INCORRECT: &quot;Use a filter expression to search for the user field in the segment annotations&quot; is incorrect as the user field is not part of the segment annotations.<br>
+<em>An application includes several producer services that send data to an Amazon SQS queue. The messages are then processed by a consumer component that must ensure that each producer&#x2019;s messages are processed in the order they are received.<br>
+How can a Developer ensure the messages are processed in the correct order?</em></p>
+<p>The MessageDeduplicationId is available in an Amazon SQS FIFO queue. With a FIFO queue, the order in which messages are sent and received is strictly preserved and a message is delivered once and remains available until a consumer processes and deletes it.<br>
+Duplicates are not introduced into the queue. FIFO queues also support message groups that allow multiple ordered message groups within a single queue.<br>
+Deduplication with FIFO queues:</p>
+<ul>
+<li>Provide a MessageDeduplicationId with the message.</li>
+<li>The de-duplication interval is 5 minutes.</li>
+<li>Content based duplication &#x2013; the MessageDeduplicationId is generated as the SHA-256 with the message body.</li>
+</ul>
+<p>Sequencing with FIFO queues:</p>
+<ul>
+<li>To ensure strict ordering between messages, specify a MessageGroupId.</li>
+<li>Messages with a different Group ID may be received out of order.</li>
+<li>Messages with the same Group ID are delivered to one consumer at a time.</li>
+</ul>
+<p>In this case, we need to ensure the messages from a specific producer are processed in order. Therefore, we need to configure each producer to send messages with a unique MessageGroupId.<br>
+CORRECT: &quot;Configure each producer with a unique MessageGroupId&quot; is the correct answer.<br>
+INCORRECT: &quot;Configure each message with a unique MessageGroupId&quot; is incorrect as the MessageGroupId should be applied to all messages that need to be ordered. You should not use a unique ID with each message.<br>
+INCORRECT: &quot;Enable the MessageDeduplicationId on the SQS queue&quot; is incorrect. The message deduplication ID is the token used for deduplication of sent messages. If a message with a particular message deduplication ID is sent successfully, any messages sent with the same message deduplication ID are accepted successfully but aren&apos;t delivered during the 5-minute deduplication interval.<br>
+INCORRECT: &quot;Enable ContentBasedDeduplication on the SQS queue&quot; is incorrect. When ContentBasedDeduplication is in effect, messages with identical content sent within the deduplication interval are treated as duplicates and only one copy of the message is delivered. This is not what we need to achieve here, we need to ensure the order of our messages not deduplicate them.</p>
+<p><em>Fault tolerance needs to be increased for a stateless application that runs on Amazon EC2 instances. The application runs in an Auto Scaling group of EC2 instances in a single subnet behind an Application Load Balancer.<br>
+How can the application be made more fault tolerant?</em></p>
+<p>The application currently resides in a single subnet and that is within a single availability zone. To increase fault tolerance the application instances should be split across subnets that are in different availability zones. This will protect against any faults that occur within a single AZ.<br>
+To do this, a subnet in another AZ can be added to both the ASG and the ALB. The ASG will automatically launch instances in the new subnet and try and balance the number of instances between these subnets. The ALB will distribute connections across both subnets/AZs.<br>
+CORRECT: &quot;Add a subnet in another AZ to the ASG and add the same subnet to the ALB&quot; is the correct answer.</p>
+<p>Explanation<br>
+Amazon S3 provides read-after-write consistency for PUTS of new objects in your S3 bucket in all Regions with one caveat. The caveat is that if you make a HEAD or GET request to a key name before the object is created, then create the object shortly after that, a subsequent GET might not return the object due to eventual consistency.<br>
+Amazon S3 offers eventual consistency for overwrite PUTS and DELETES in all Regions. Therefore, the most likely explanation for this issue is that the old object version was retrieved due to Amazon&#x2019;s eventual consistency model for overwrite PUTS.</p>
+<p>Explanation<br>
+You can create one or more aliases for your AWS Lambda function. A Lambda alias is like a pointer to a specific Lambda function version. Users can access the function version using the alias ARN.<br>
+You can point an alias a multiple versions of your function code and then assign a weighting to direct certain amounts of traffic to each version. This enables a blue/green style of deployment and means it&#x2019;s easy to roll back to the older version by simply updating the weighting if issues occur.</p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
